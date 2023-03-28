@@ -37,7 +37,7 @@ export enum wafUsage {
 
 export interface AwsJwtStsProps {
   /**
-   * HostedZoneId of the domain used for hosting the sts function
+   * defaultAudience which is used in de JWT's
    */
   readonly defaultAudience: string;
 
