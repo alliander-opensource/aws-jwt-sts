@@ -1,0 +1,59 @@
+{
+  "name": "@alliander/aws-jwt-sts",
+  "version": "0.2.3",
+  "author": {
+    "name": "Alliander"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist/*",
+    "src/*"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Alliander/aws-jwt-sts.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "watch": "tsc -w",
+    "test": "jest --coverage",
+    "cdk": "cdk",
+    "lint": "eslint . --ext .ts"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "18.15.10",
+    "@types/prettier": "2.7.2",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "aws-cdk": "2.70.0",
+    "aws-sdk-client-mock": "^2.1.1",
+    "esbuild": "^0.17.14",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest": "^29.5.0",
+    "jwt-decode": "^3.1.2",
+    "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.1",
+    "typescript": "~5.0.2"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^1.7.0",
+    "@aws-sdk/client-kms": "^3.300.0",
+    "@aws-sdk/client-s3": "^3.300.0",
+    "@types/aws-lambda": "^8.10.114",
+    "@types/jsrsasign": "^10.5.7",
+    "aws-cdk-lib": "2.70.0",
+    "base64url": "^3.0.1",
+    "constructs": "^10.1.293",
+    "jsrsasign": "^10.7.0",
+    "source-map-support": "^0.5.21"
+  }
+}

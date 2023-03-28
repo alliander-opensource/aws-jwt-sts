@@ -1,0 +1,10 @@
+name: ospo-code-check
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  code-check:
+    uses: Alliander/ospo-workflows/.github/workflows/code-check.yml@main
+    secrets: inherit
