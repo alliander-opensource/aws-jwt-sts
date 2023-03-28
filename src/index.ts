@@ -380,13 +380,13 @@ export class AwsJwtSts extends Construct {
       })
 
       new cdk.CfnOutput(this, 'tokenEndpoint', {
-        value: 'http://' + tokenDomainName + '/token',
+        value: 'https://' + tokenDomainName + '/token',
         description: 'Url of the token endpoint',
         exportName: 'tokenEndpoint'
       })
     } else {
       new cdk.CfnOutput(this, 'tokenEndpoint', {
-        value: 'http://' + api.domainName + '/prod/token',
+        value: api.url + 'token',
         description: 'Url of the token endpoint',
         exportName: 'tokenEndpoint'
       })
