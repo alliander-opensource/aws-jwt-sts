@@ -15,16 +15,7 @@ jobs:
 #          path: ~/.cache/pre-commit
 #          key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
       - run: pip3 install pre-commit
-      - name: "install root node dependencies"
-        run: npm install
-      - name: "install handlers/keyrotate node dependencies"
-        working-directory: ./handlers/keyrotate
-        run: npm install
-      - name: "install handlers/sign node dependencies"
-        working-directory: ./handlers/sign
-        run: npm install
-      - name: "install handlers/notification node dependencies"
-        working-directory: ./handlers/notification
+      - name: "install dependencies"
         run: npm install
       - name: "run pre-commit"
         run: pre-commit run --all-files -c .pre-commit-config-ci.yaml

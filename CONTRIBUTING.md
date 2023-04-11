@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 'Copyright Alliander NV' 
+SPDX-FileCopyrightText: 'Copyright Alliander NV'
 
 SPDX-License-Identifier: Apache-2.0
 -->
@@ -11,7 +11,7 @@ just a few small guidelines you need to follow.
 
 ## Ways of contributing
 
-Contribution does not necessarily mean committing code to the repository. 
+Contribution does not necessarily mean committing code to the repository.
 We recognize different levels of contributions as shown below in increasing order of dedication:
 
 1. Test and use the project. Give feedback on the user experience or suggest new features.

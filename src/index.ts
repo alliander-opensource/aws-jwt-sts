@@ -167,9 +167,14 @@ export class AwsJwtSts extends Construct {
 
     const issuer = useCustomDomain ? 'https://' + oidcDomainName : 'https://' + distribution.distributionDomainName
 
+    const rotateKeysRole = new iam.Role(this, 'rotateKeysRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')]
+    })
     const rotateKeys = new lambdaNodejs.NodejsFunction(this, 'keyrotate', {
       timeout: cdk.Duration.seconds(5),
       runtime: lambda.Runtime.NODEJS_18_X,
+      role: rotateKeysRole,
       architecture,
       environment: {
         S3_BUCKET: oidcbucket.bucketName,
@@ -177,9 +182,14 @@ export class AwsJwtSts extends Construct {
       }
     })
 
+    const signRole = new iam.Role(this, 'signRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')]
+    })
     const sign = new lambdaNodejs.NodejsFunction(this, 'sign', {
       timeout: cdk.Duration.seconds(5),
       runtime: lambda.Runtime.NODEJS_18_X,
+      role: signRole,
       architecture,
       environment: {
         ISSUER: issuer,
@@ -289,12 +299,18 @@ export class AwsJwtSts extends Construct {
     const statementSign = new iam.PolicyStatement()
     statementSign.addActions('kms:*')
     statementSign.addResources('*')
-    sign.addToRolePolicy(statementSign)
+    const signPolicy = new iam.ManagedPolicy(this, 'SignPolicy', {
+      statements: [statementSign]
+    })
+    signRole.addManagedPolicy(signPolicy)
 
     const statementRotateKeys = new iam.PolicyStatement()
     statementRotateKeys.addActions('kms:*')
     statementRotateKeys.addResources('*')
-    rotateKeys.addToRolePolicy(statementRotateKeys)
+    const rotateKeysPolicy = new iam.ManagedPolicy(this, 'RotateKeysPolicy', {
+      statements: [statementRotateKeys]
+    })
+    rotateKeysRole.addManagedPolicy(rotateKeysPolicy)
 
     /** ------------------ Events Rule Definition ------------------ */
 

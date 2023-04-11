@@ -7,21 +7,21 @@ An alternative to authenticating with external workloads is to use short-lived c
 
 ## Secure Token Service (STS)
 Exchanging credentials from on form to the other is done with a Secure Token Service (STS) function. AWS also provides STS functions not the one we need. Only the other way around: to exchange a JWT to IAM Session which is called [AssumeRoleWithWebIdentity](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html).
-This repo contains a CDK Construct which will deploy a new function which adds the function to exchange an AWS IAM (Session) credential with a signed JWT. 
+This repo contains a CDK Construct which will deploy a new function which adds the function to exchange an AWS IAM (Session) credential with a signed JWT.
 
 ## Solution overview
 
 The solution provides 2 endpoints; an OIDC discovery endpoint and a token endpoint. The OIDC discovery endpoint can be used to establish a trust between te STS function and a resource. The token endpoint can be used by client in AWS to exchange their IAM credentials to a JWT.
 
-When a client wants to retrieve a JWT key, it will invoke the token API via the API GW. The backing lambda creates a JWT based on the invoking IAM identity and invokes KMS to sign the token. 
+When a client wants to retrieve a JWT key, it will invoke the token API via the API GW. The backing lambda creates a JWT based on the invoking IAM identity and invokes KMS to sign the token.
 
-On time based events, EventBridge will trigger a Step function rotation flow. This flow triggers a lambda which in subsequent steps will create a new KMS signing key. Based on that signing key a JWKS is generated and stored in S3 together with discovery files. 
+On time based events, EventBridge will trigger a Step function rotation flow. This flow triggers a lambda which in subsequent steps will create a new KMS signing key. Based on that signing key a JWKS is generated and stored in S3 together with discovery files.
 
 ![Solution architecture](/doc/sts-jwt-function.drawio.png "Solution architecture")
 
 ## Using the construct
 
-1.	Init a new typescript CDK project 
+1.	Init a new typescript CDK project
     `cdk init app --language typescript`
 2.	Config npm to retrieve packages from github package repository
     `echo @alliander-opensource:registry=https://npm.pkg.github.com > .npmrc`
@@ -38,7 +38,7 @@ import { AwsJwtSts, wafUsage } from '@alliander-opensource/aws-jwt-sts'
 export class MyStsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    
+
     new AwsJwtSts(this, 'sts', {
       /*
       * Mandatory:
@@ -46,7 +46,7 @@ export class MyStsStack extends cdk.Stack {
       * Set the default aud claim in the jwt, when not specified in the GET param
       */
       defaultAudience: 'api://resourceAudience',
-    
+
       /*
       * Optional: when using a custom domain
       *
@@ -56,13 +56,13 @@ export class MyStsStack extends cdk.Stack {
       */
       hostedZoneName: 'test.example.com', // domain name of the zone
       hostedZoneId: 'ZXXXXXXXXXXXXXXXXXXXX', // zoneId of the zone
-    
+
       /*
       * Optional; when using a custom domain the subdomains of the endpoints can optionally be set
       */
       oidcSubdomain: 'oidc', // default 'oidc' for the discovery endpoint (cloudfront)
       tokenSubdomain: 'token', // default 'token' for the the token api gw endpoint
-    
+
       /*
       * Optional:
       *
@@ -74,14 +74,14 @@ export class MyStsStack extends cdk.Stack {
       * By not setting apiGwWaf, no WAF will be deployed
       */
       apiGwWaf: wafUsage.ProvideWebAclArn,
-    
+
       /*
       * Optional; only applicable if apiGwWaf is set to: wafUsage.ProvideWebAclArn
       *
       * Specify the WebAcl to use for the API GW
       */
       apiGwWafWebAclArn: 'arn:aws:wafv2:{REGION}:{ACCOUNTID}:regional/webacl/{WebAclName}/{WebAclId}',
-    
+
       /*
       * Optional:
       *
@@ -90,7 +90,7 @@ export class MyStsStack extends cdk.Stack {
       * When not specified no policy is places on the API GW Stage and it will only allow access from within that account
       */
       orgId: 'o-xxxxxxxxxx'
-    
+
     })
   }
 }
@@ -102,7 +102,7 @@ export class MyStsStack extends cdk.Stack {
 The stack outputs the urls of the endpoints. So if no custom domain is provided observe the CDK Stack output.
 
 ## Using the STS function
-A token from the STS function can be obained by invoking the token endpoint. 
+A token from the STS function can be obained by invoking the token endpoint.
 `GET https://$host/token`
 optionally an audience can be provided if this needs to be different than the installed default
 `GET https://$host/token?aud=api://myAudience`
