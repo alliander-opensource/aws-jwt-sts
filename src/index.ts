@@ -76,7 +76,7 @@ export interface AwsJwtStsProps {
    */
   readonly apiGwWafWebAclArn?: string;
 
-    /**
+  /**
    * The ID of the AWS Organization 0-xxxx
    *
    */
@@ -90,6 +90,12 @@ export interface AwsJwtStsProps {
 
 /* eslint-disable no-new */
 export class AwsJwtSts extends Construct {
+
+  /**
+   * SNS topic used to publish errors from the Step Function rotation flow
+   */
+  public readonly failedRotationTopic: sns.Topic;
+
   constructor (app: Construct, id: string, props: AwsJwtStsProps) {
     super(app, id)
 
@@ -199,9 +205,9 @@ export class AwsJwtSts extends Construct {
 
     /** ------------------------ SNS Topic ------------------------- */
 
-    const topic = new sns.Topic(this, 'sts')
+    this.failedRotationTopic = new sns.Topic(this, 'sts')
     const snsFail = new tasks.SnsPublish(this, 'snsFailed', {
-      topic,
+      topic: this.failedRotationTopic,
       subject: 'STS KeyRotate step function execution failed',
       message: sfn.TaskInput.fromJsonPathAt('$')
     })
