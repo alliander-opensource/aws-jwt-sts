@@ -86,15 +86,34 @@ export interface AwsJwtStsProps {
    * CPU Architecture
    */
   readonly architecture?: lambda.Architecture
+
+  /**
+   * Optional custom name for the CloudWatch Alarm monitoring Step Function failures, default: sts-key_rotate_sfn-alarm
+   */
+  readonly alarmNameKeyRotationStepFunctionFailed?: string
+
+  /**
+   * Optional custom name for the CloudWatch Alarm monitoring 5xx errors on the API Gateway, default: sts-5xx_api_gw-alarm
+   */
+  readonly alarmNameApiGateway5xx?: string
+
+  /**
+   * Optional custom name for the CloudWatch Alarm monitoring Sign Lambda failures, default: sts-sign_errors_lambda-alarm
+   */
+  readonly alarmNameSignLambdaFailed?: string
+
+  /**
+   * Optional custom name for the CloudWatch Alarm monitoring Key Rotation Lambda failures, default: sts-key_rotate_errors_lambda-alarm
+   */
+  readonly alarmNameKeyRotationLambdaFailed?: string
 }
 
 /* eslint-disable no-new */
 export class AwsJwtSts extends Construct {
-
   /**
    * SNS topic used to publish errors from the Step Function rotation flow
    */
-  public readonly failedRotationTopic: sns.Topic;
+  public readonly failedRotationTopic: sns.Topic
 
   constructor (app: Construct, id: string, props: AwsJwtStsProps) {
     super(app, id)
@@ -520,7 +539,7 @@ export class AwsJwtSts extends Construct {
     /** ---------------------- Cloudwatch ----------------------- */
 
     new cloudwatch.Alarm(this, 'StepFunctionError', {
-      alarmName: 'sts-key_rotate_sfn-alarm',
+      alarmName: props.alarmNameKeyRotationStepFunctionFailed ?? 'sts-key_rotate_sfn-alarm',
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       threshold: 1,
       evaluationPeriods: 1,
@@ -530,7 +549,7 @@ export class AwsJwtSts extends Construct {
     })
 
     new cloudwatch.Alarm(this, 'ApiGateway5XXAlarm', {
-      alarmName: 'sts-5xx_api_gw-alarm',
+      alarmName: props.alarmNameApiGateway5xx ?? 'sts-5xx_api_gw-alarm',
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       threshold: 1,
       evaluationPeriods: 1,
@@ -548,7 +567,7 @@ export class AwsJwtSts extends Construct {
     })
 
     new cloudwatch.Alarm(this, 'LambdaSignError', {
-      alarmName: 'sts-sign_errors_lambda-alarm',
+      alarmName: props.alarmNameSignLambdaFailed ?? 'sts-sign_errors_lambda-alarm',
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       threshold: 1,
       evaluationPeriods: 1,
@@ -558,7 +577,7 @@ export class AwsJwtSts extends Construct {
     })
 
     new cloudwatch.Alarm(this, 'LambdaRotateError', {
-      alarmName: 'sts-key_rotate_errors_lambda-alarm',
+      alarmName: props.alarmNameKeyRotationLambdaFailed ?? 'sts-key_rotate_errors_lambda-alarm',
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
       threshold: 1,
       evaluationPeriods: 1,

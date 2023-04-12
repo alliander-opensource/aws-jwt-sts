@@ -18,3 +18,28 @@ test('creates sts construct correctly', () => {
     Runtime: 'nodejs18.x'
   }))
 })
+
+test('creates sts construct with custom alarm names', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'AllianderIngress', {
+    defaultAudience: 'api://default-aud',
+    alarmNameApiGateway5xx: 'alarm-api-gw-5xx',
+    alarmNameKeyRotationLambdaFailed: 'alarm-key-rotation-lambda-failed',
+    alarmNameKeyRotationStepFunctionFailed: 'alarm-step-functions-failed',
+    alarmNameSignLambdaFailed: 'alarm-sign-lambda-failed'
+  })
+
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'alarm-api-gw-5xx'
+  }))
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'alarm-key-rotation-lambda-failed'
+  }))
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'alarm-step-functions-failed'
+  }))
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'alarm-sign-lambda-failed'
+  }))
+})
