@@ -88,6 +88,11 @@ export interface AwsJwtStsProps {
   readonly architecture?: lambda.Architecture
 
   /**
+   * Optional boolean to specify if key rotation should be triggered on create and update of the stack, default: true
+   */
+  readonly enableKeyRotateOnCreateAndUpdate?: boolean
+
+  /**
    * Optional custom name for the CloudWatch Alarm monitoring Step Function failures, default: sts-key_rotate_sfn-alarm
    */
   readonly alarmNameKeyRotationStepFunctionFailed?: string
@@ -355,7 +360,8 @@ export class AwsJwtSts extends Construct {
             status: ['CREATE_COMPLETE', 'UPDATE_COMPLETE']
           }
         }
-      }
+      },
+      enabled: props.enableKeyRotateOnCreateAndUpdate ?? true
     })
     initialRunRule.addTarget(new targets.SfnStateMachine(populateKeys))
 
