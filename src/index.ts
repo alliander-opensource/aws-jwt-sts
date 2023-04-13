@@ -88,6 +88,11 @@ export interface AwsJwtStsProps {
   readonly architecture?: lambda.Architecture
 
   /**
+   * Optional boolean to specify if key rotation should be triggered on creation of the stack, default: false
+   */
+  readonly disableKeyRotateOnCreate?: boolean
+
+  /**
    * Optional custom name for the CloudWatch Alarm monitoring Step Function failures, default: sts-key_rotate_sfn-alarm
    */
   readonly alarmNameKeyRotationStepFunctionFailed?: string
@@ -302,22 +307,6 @@ export class AwsJwtSts extends Construct {
       timeout: cdk.Duration.minutes(5)
     })
 
-    const rotateOnce = new tasks.StepFunctionsStartExecution(this, 'rotateOnce', {
-      stateMachine: rotateKeysMachine,
-      integrationPattern: sfn.IntegrationPattern.RUN_JOB
-    })
-
-    const rotateTwice = new tasks.StepFunctionsStartExecution(this, 'rotateTwice', {
-      stateMachine: rotateKeysMachine,
-      integrationPattern: sfn.IntegrationPattern.RUN_JOB
-    })
-
-    // Create state machine
-    const populateKeys = new sfn.StateMachine(this, 'populateKeys', {
-      definition: rotateOnce.next(rotateTwice),
-      timeout: cdk.Duration.minutes(10)
-    })
-
     rotateKeys.grantInvoke(rotateKeysMachine.role)
     oidcbucket.grantReadWrite(rotateKeys)
 
@@ -345,19 +334,38 @@ export class AwsJwtSts extends Construct {
     })
     scheduledRotateRule.addTarget(new targets.SfnStateMachine(rotateKeysMachine))
 
-    const initialRunRule = new events.Rule(this, 'initialRunRule', {
-      eventPattern: {
-        source: ['aws.cloudformation'],
-        resources: [cdk.Stack.of(this).stackId],
-        detailType: ['CloudFormation Stack Status Change'],
-        detail: {
-          'status-details': {
-            status: ['CREATE_COMPLETE', 'UPDATE_COMPLETE']
+    // Create state machine and trigger to populate initial keys
+    if (!props.disableKeyRotateOnCreate) {
+      const rotateOnce = new tasks.StepFunctionsStartExecution(this, 'rotateOnce', {
+        stateMachine: rotateKeysMachine,
+        integrationPattern: sfn.IntegrationPattern.RUN_JOB
+      })
+
+      const rotateTwice = new tasks.StepFunctionsStartExecution(this, 'rotateTwice', {
+        stateMachine: rotateKeysMachine,
+        integrationPattern: sfn.IntegrationPattern.RUN_JOB
+      })
+
+      const populateKeys = new sfn.StateMachine(this, 'populateKeys', {
+        definition: rotateOnce.next(rotateTwice),
+        timeout: cdk.Duration.minutes(10)
+      })
+
+      const initialRunRule = new events.Rule(this, 'initialRunRule', {
+        eventPattern: {
+          source: ['aws.cloudformation'],
+          resources: [cdk.Stack.of(this).stackId],
+          detailType: ['CloudFormation Stack Status Change'],
+          detail: {
+            'status-details': {
+              status: ['CREATE_COMPLETE']
+            }
           }
         }
-      }
-    })
-    initialRunRule.addTarget(new targets.SfnStateMachine(populateKeys))
+      })
+
+      initialRunRule.addTarget(new targets.SfnStateMachine(populateKeys))
+    }
 
     /** ---------------------- API Gateway ----------------------- */
 
