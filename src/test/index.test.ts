@@ -32,19 +32,18 @@ test('creates sts construct with key rotation on create/update disabled', () => 
   const stack = new cdk.Stack()
   new AwsJwtSts(stack, 'AllianderIngress', {
     defaultAudience: 'api://default-aud',
-    enableKeyRotateOnCreateAndUpdate: false
+    disableKeyRotateOnCreate: true
   })
 
   const template = Template.fromStack(stack)
 
-  template.hasResourceProperties('AWS::Events::Rule', Match.objectLike(
+  template.resourcePropertiesCountIs('AWS::Events::Rule', Match.objectLike(
     {
       EventPattern: {
         'detail-type': ['CloudFormation Stack Status Change']
-      },
-      State: 'DISABLED'
+      }
     }
-  ))
+  ), 0)
 })
 
 test('creates sts construct with custom alarm names', () => {
