@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 18
           scope: "@alliander-opensource"
+          registry-url: 'https://registry.npmjs.org'
       - name: install dependencies
         run: npm install
       - name: run tests
@@ -21,6 +22,6 @@ jobs:
       - name: compile typescript
         run: npm run build
       - name: publish npm package
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM}}
