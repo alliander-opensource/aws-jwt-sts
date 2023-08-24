@@ -1,6 +1,6 @@
 {
   "name": "@alliander-opensource/aws-jwt-sts",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "author": {
     "name": "Alliander NV"
   },
