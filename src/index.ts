@@ -35,6 +35,28 @@ export enum wafUsage {
   ProvideWebAclArn
 }
 
+export interface AwsJwtStsAlternativeDomainProps {
+  /**
+   * HostedZoneId of the alternative domain
+   */
+  readonly hostedZoneId: string;
+
+  /**
+   * Name of the alternative hostedZone.
+   */
+  readonly hostedZoneName: string;
+
+  /**
+  * Optional subdomain name of oidc discovery, default: oidc.
+  */
+  readonly oidcSubdomain?: string;
+
+  /**
+  * Optional subdomain name of the token api (on api gw), default: token.
+  */
+  readonly tokenSubdomain?: string;
+}
+
 export interface AwsJwtStsProps {
   /**
    * defaultAudience which is used in de JWT's
@@ -60,6 +82,13 @@ export interface AwsJwtStsProps {
   * Optional subdomain name of the token api (on api gw), default: token.
   */
   readonly tokenSubdomain?: string;
+
+  /**
+   * Optional configuration for an alternative domain in a different hostedZone, can only be used in combination with a custom domain
+   *
+   * If set, the construct will create subdomains and configure certificates for the provided alternative domains in addition to the main domain
+   */
+  readonly alternativeDomainConfig?: AwsJwtStsAlternativeDomainProps;
 
   /**
    * If waf needs to be added to the API GW
@@ -129,6 +158,11 @@ export class AwsJwtSts extends Construct {
     let oidcCertificate: ICertificate | undefined
     let tokenCertificate: ICertificate | undefined
     let hostedZone: IHostedZone | undefined
+
+    let alternativeOidcDomainName: string | undefined
+    let alternativeTokenDomainName: string | undefined
+    let alternativeHostedZone: IHostedZone | undefined
+
     const oidcSubdomain = props.oidcSubdomain ? props.oidcSubdomain : 'oidc'
     const tokenSubdomain = props.tokenSubdomain ? props.tokenSubdomain : 'token'
     const architecture = props.architecture ? props.architecture : lambda.Architecture.X86_64
@@ -136,6 +170,10 @@ export class AwsJwtSts extends Construct {
     let tokenDomainName = ''
 
     const useCustomDomain = props.hostedZoneId && props.hostedZoneName
+
+    if (!useCustomDomain && props.alternativeDomainConfig) {
+      throw new Error('Alternative domain configuration can only be used in combination with a custom domain')
+    }
 
     if (useCustomDomain) {
       oidcDomainName = oidcSubdomain + '.' + props.hostedZoneName
@@ -152,10 +190,38 @@ export class AwsJwtSts extends Construct {
         }
       )
 
+      if (props.alternativeDomainConfig) {
+        const alternativeOidcSubdomain = props.alternativeDomainConfig.oidcSubdomain ?? 'oidc'
+        const alternativeTokenSubdomain = props.alternativeDomainConfig.tokenSubdomain ?? 'token'
+
+        alternativeOidcDomainName = alternativeOidcSubdomain + '.' + props.alternativeDomainConfig.hostedZoneName
+        alternativeTokenDomainName = alternativeTokenSubdomain + '.' + props.alternativeDomainConfig.hostedZoneName
+
+        alternativeHostedZone = route53.HostedZone.fromHostedZoneAttributes(
+          this,
+          'alternativeHostedZone',
+          {
+            zoneName: props.alternativeDomainConfig.hostedZoneName,
+            hostedZoneId: props.alternativeDomainConfig.hostedZoneId
+          }
+        )
+
+        distributionDomainNames.push(alternativeOidcDomainName)
+      }
+
+      const oidcCertificateValidation = props.alternativeDomainConfig
+        ? acm.CertificateValidation.fromDnsMultiZone({
+          [oidcDomainName]: hostedZone,
+          [alternativeOidcDomainName!]: alternativeHostedZone!
+        })
+        : acm.CertificateValidation.fromDns(hostedZone)
+
       oidcCertificate = new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
         domainName: oidcDomainName,
+        subjectAlternativeNames: alternativeOidcDomainName ? [alternativeOidcDomainName] : undefined,
         hostedZone,
-        region: 'us-east-1'
+        region: 'us-east-1',
+        validation: oidcCertificateValidation
       })
 
       tokenCertificate = new acm.Certificate(this, 'tokenCertificate', {
@@ -421,6 +487,14 @@ export class AwsJwtSts extends Construct {
         zone: hostedZone,
         target: route53.RecordTarget.fromAlias(new route53targets.CloudFrontTarget(distribution))
       })
+
+      if (alternativeOidcDomainName) {
+        new route53.ARecord(this, 'alternativeOidcRecord', {
+          recordName: alternativeOidcDomainName,
+          zone: alternativeHostedZone!,
+          target: route53.RecordTarget.fromAlias(new route53targets.CloudFrontTarget(distribution))
+        })
+      }
 
       new route53.ARecord(this, 'tokenRecord', {
         recordName: tokenDomainName,
