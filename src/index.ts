@@ -431,20 +431,20 @@ export class AwsJwtSts extends Construct {
       new cdk.CfnOutput(this, 'tokenEndpoint', {
         value: 'https://' + tokenDomainName + '/token',
         description: 'Url of the token endpoint',
-        exportName: 'tokenEndpoint'
+        exportName: `${cdk.Stack.of(this)}-tokenEndpoint`
       })
     } else {
       new cdk.CfnOutput(this, 'tokenEndpoint', {
         value: api.url + 'token',
         description: 'Url of the token endpoint',
-        exportName: 'tokenEndpoint'
+        exportName: `${cdk.Stack.of(this)}-tokenEndpoint`
       })
     }
 
     new cdk.CfnOutput(this, 'issuer', {
       value: issuer,
       description: 'Url of the issuer',
-      exportName: 'issuer'
+      exportName: `${cdk.Stack.of(this)}-issuer`
     })
 
     /** ---------------------- WAF ----------------------- */
