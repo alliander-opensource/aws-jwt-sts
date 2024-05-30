@@ -303,7 +303,9 @@ export class AwsJwtSts extends Construct {
 
     // Create state machine
     const rotateKeysMachine = new sfn.StateMachine(this, 'RotateKeys', {
-      definition,
+      definitionBody: sfn.DefinitionBody.fromChainable(
+        definition
+      ),
       timeout: cdk.Duration.minutes(5)
     })
 
@@ -347,7 +349,9 @@ export class AwsJwtSts extends Construct {
       })
 
       const populateKeys = new sfn.StateMachine(this, 'populateKeys', {
-        definition: rotateOnce.next(rotateTwice),
+        definitionBody: sfn.DefinitionBody.fromChainable(
+          rotateOnce.next(rotateTwice)
+        ),
         timeout: cdk.Duration.minutes(10)
       })
 

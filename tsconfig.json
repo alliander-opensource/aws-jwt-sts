@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "target": "ES2020",
+    "target": "ES2018",
     "module": "commonjs",
     "lib": [
       "es2018",
@@ -30,12 +30,14 @@
     "stripInternal": false,
     "composite": false,
     "typeRoots": [
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "./node_modules/@types/node"
     ],
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "exclude": [
     "node_modules",
-    "cdk.out"
+    "cdk.out",
+    "./dist/**/*"
   ]
 }
