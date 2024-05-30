@@ -1,4 +1,5 @@
 # Use IAM roles to authenticate principals in workloads outside of AWS using JWT
+
 There is an inherent risk in maintaining and storing permanent credentials. In their lifetime, they are bound to be shared, compromised, and lost. When shared, it is often among a broader audience than initially intended. They can also be lost and found, sometimes by the wrong person. And when any of this occurs, it can put your systems, data or even organization at risk.
 
 Workloads running on AWS can communicate with each other or with AWS services without the need of storing permanent credentials by assuming roles or instance profiles. However, if one of the workloads lives outside of AWS, AWS principals can no longer be used for authentication.
@@ -6,6 +7,7 @@ Workloads running on AWS can communicate with each other or with AWS services wi
 An alternative to authenticating with external workloads is to use short-lived credentials issued by a trusted party, the issuer, that the target system can accept. JWTs (JSON Web Tokens), as used by the OIDC (OpenID Connect) standard, are an example of such credentials. JWTs are short-lived credentials that can be signed and verified using a public key in what is known as public-key cryptography.
 
 ## Secure Token Service (STS)
+
 Exchanging credentials from on form to the other is done with a Secure Token Service (STS) function. AWS also provides STS functions not the one we need. Only the other way around: to exchange a JWT to IAM Session which is called [AssumeRoleWithWebIdentity](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html).
 This repo contains a CDK Construct which will deploy a new function which adds the function to exchange an AWS IAM (Session) credential with a signed JWT.
 
@@ -21,13 +23,13 @@ On time based events, EventBridge will trigger a Step function rotation flow. Th
 
 ## Using the construct
 
-1.	Init a new typescript CDK project
+1. Init a new typescript CDK project
     `cdk init app --language typescript`
-2.	Config npm to retrieve packages from github package repository
+2. Config npm to retrieve packages from github package repository
     `echo @alliander-opensource:registry=https://npm.pkg.github.com > .npmrc`
-3.	Install the aws-jwt-sts construct
+3. Install the aws-jwt-sts construct
     `npm install @alliander-opensource/aws-jwt-sts`
-4.	Edit lib/my-sts-stack.ts to add the construct to the stack
+4. Edit lib/my-sts-stack.ts to add the construct to the stack
     See the comments in the code for possible options
 
 ```ts
@@ -102,6 +104,7 @@ export class MyStsStack extends cdk.Stack {
 The stack outputs the urls of the endpoints. So if no custom domain is provided observe the CDK Stack output.
 
 ## Using the STS function
+
 A token from the STS function can be obained by invoking the token endpoint.
 `GET https://$host/token`
 optionally an audience can be provided if this needs to be different than the installed default
@@ -110,6 +113,7 @@ optionally an audience can be provided if this needs to be different than the in
 > Note: The IAM Role / User invoking the endpoint must have *execute-api:Invoke* permissions
 
 In CDK these permission is added as followed:
+
 ```ts
 role.addToPolicy(new iam.PolicyStatement({
       actions: ['execute-api:Invoke'],
@@ -120,11 +124,13 @@ role.addToPolicy(new iam.PolicyStatement({
 > Note: keep in mind that *resource '\*'* should only be used if no other API GW's with IAM auth are used in that account.
 
 ### Test obtaining a JWT
-1.	Ensure the AWS IAM Role / User invoking the token endpoint has execute-api permissions. If you are using administrator access then that is more than sufficient.
-2.	Use a shell with AWS cli logged in, you can use your cli with which you deployed the stack or use cloudshell for this.
-3.	Install awscurl for authentication
+
+1. Ensure the AWS IAM Role / User invoking the token endpoint has execute-api permissions. If you are using administrator access then that is more than sufficient.
+2. Use a shell with AWS cli logged in, you can use your cli with which you deployed the stack or use cloudshell for this.
+3. Install awscurl for authentication
     `pip3 install awscurl`
-4.	Install jwt-cli for jwt formatting
+4. Install jwt-cli for jwt formatting
     `npm install -g jwt-cli`
-5.	Invoke the api: `awscurl {your token endpoint}/token --service execute-api --region {your_region} | jq -r .token | jwt decode – `
-6.	Observe the JWT
+5. Invoke the api
+    `awscurl {your_token_endpoint}/token --service execute-api --region {your_region} | jq -r .token | jwt decode –`
+6. Observe the JWT
