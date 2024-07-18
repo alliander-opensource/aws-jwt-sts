@@ -242,7 +242,7 @@ export class AwsJwtSts extends Construct {
       environment: {
         ISSUER: issuer,
         DEFAULT_AUDIENCE: props.defaultAudience,
-        CURRENT_KEY: props.currentKeyName ?? 'sts/CURRENT'
+        CURRENT_KEY: 'alias/' + (props.currentKeyName ?? 'sts/CURRENT')
       }
     })
 
