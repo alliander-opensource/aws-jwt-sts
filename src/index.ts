@@ -224,9 +224,9 @@ export class AwsJwtSts extends Construct {
       environment: {
         S3_BUCKET: oidcbucket.bucketName,
         ISSUER: issuer,
-        CURRENT_KEY: props.currentKeyName ?? 'sts/CURRENT',
-        PREVIOUS_KEY: props.previousKeyName ?? 'sts/PREVIOUS',
-        PENDING_KEY: props.pendingKeyName ?? 'sts/PENDING'
+        CURRENT_KEY: 'alias/' + (props.currentKeyName ?? 'sts/CURRENT'),
+        PREVIOUS_KEY: 'alias/' + (props.previousKeyName ?? 'sts/PREVIOUS'),
+        PENDING_KEY: 'alias/' + (props.pendingKeyName ?? 'sts/PENDING')
       }
     })
 
