@@ -6,6 +6,13 @@ import { mockClient } from 'aws-sdk-client-mock'
 import { KMSClient, GetPublicKeyCommand, DescribeKeyCommand } from '@aws-sdk/client-kms'
 import { S3Client } from '@aws-sdk/client-s3'
 
+process.env = { // set env vars as they are called on load of the file
+  CURRENT_KEY: 'alias/sts/CURRENT',
+  PREVIOUS_KEY: 'alias/sts/PREVIOUS',
+  PENDING_KEY: 'alias/sts/PENDING'
+}
+
+// eslint-disable-next-line import/first
 import { handler } from '../index.keyrotate'
 
 const kmsMock = mockClient(KMSClient)

@@ -8,7 +8,7 @@ import base64url from 'base64url'
 
 import { Logger } from '@aws-lambda-powertools/logger'
 
-const KEY_ALIAS_CURRENT = 'alias/sts/CURRENT'
+const KEY_ALIAS_CURRENT = process.env.CURRENT_KEY!.toString()
 const logger = new Logger()
 
 export const handler = async (apiEvent: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {

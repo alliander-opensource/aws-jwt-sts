@@ -19,9 +19,9 @@ import { KEYUTIL, KJUR } from 'jsrsasign'
 
 const client = new KMSClient({})
 
-const ALIAS_PREVIOUS = 'alias/sts/PREVIOUS'
-const ALIAS_CURRENT = 'alias/sts/CURRENT'
-const ALIAS_PENDING = 'alias/sts/PENDING'
+const ALIAS_PREVIOUS = process.env.PREVIOUS_KEY!.toString()
+const ALIAS_CURRENT = process.env.CURRENT_KEY!.toString()
+const ALIAS_PENDING = process.env.PENDING_KEY!.toString()
 
 const ALIASES: string[] = [
   ALIAS_PREVIOUS,

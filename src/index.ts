@@ -111,6 +111,21 @@ export interface AwsJwtStsProps {
    * Optional custom name for the CloudWatch Alarm monitoring Key Rotation Lambda failures, default: sts-key_rotate_errors_lambda-alarm
    */
   readonly alarmNameKeyRotationLambdaFailed?: string
+
+  /**
+   * current kms key name
+   */
+  readonly currentKeyName?: string
+
+  /**
+   * previous kms key name
+   */
+  readonly previousKeyName?: string
+
+  /**
+   * pending kms key name
+   */
+  readonly pendingKeyName?: string
 }
 
 /* eslint-disable no-new */
@@ -208,7 +223,10 @@ export class AwsJwtSts extends Construct {
       architecture,
       environment: {
         S3_BUCKET: oidcbucket.bucketName,
-        ISSUER: issuer
+        ISSUER: issuer,
+        CURRENT_KEY: 'alias/' + (props.currentKeyName ?? 'sts/CURRENT'),
+        PREVIOUS_KEY: 'alias/' + (props.previousKeyName ?? 'sts/PREVIOUS'),
+        PENDING_KEY: 'alias/' + (props.pendingKeyName ?? 'sts/PENDING')
       }
     })
 
@@ -223,7 +241,8 @@ export class AwsJwtSts extends Construct {
       architecture,
       environment: {
         ISSUER: issuer,
-        DEFAULT_AUDIENCE: props.defaultAudience
+        DEFAULT_AUDIENCE: props.defaultAudience,
+        CURRENT_KEY: 'alias/' + (props.currentKeyName ?? 'sts/CURRENT')
       }
     })
 
