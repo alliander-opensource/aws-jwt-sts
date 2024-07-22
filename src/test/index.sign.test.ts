@@ -14,6 +14,8 @@ import {
   SignCommand
 } from '@aws-sdk/client-kms'
 
+process.env.CURRENT_KEY = 'key-1'// set env var as it is called on load of the file
+// eslint-disable-next-line import/first
 import { handler } from '../index.sign'
 
 const kmsMock = mockClient(KMSClient)
