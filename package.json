@@ -27,7 +27,7 @@
     "@types/prettier": "2.7.3",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
-    "aws-cdk": "^2.143.1",
+    "aws-cdk": "^2.148.1",
     "aws-sdk-client-mock": "^4.0.0",
     "esbuild": "^0.21.4",
     "eslint-config-standard": "^17.1.0",
