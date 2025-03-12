@@ -200,7 +200,7 @@ export class AwsJwtSts extends Construct {
       domainNames: distributionDomainNames,
       comment: 'Discovery endpoint for OIDC',
       certificate: oidcCertificate,
-      defaultRootObject: "index.html",
+      defaultRootObject: 'index.html',
       defaultBehavior: {
         origin: new cloudfrontOrigins.S3Origin(oidcbucket, { originAccessIdentity: cloudfrontOAI }),
         compress: true,
