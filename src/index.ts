@@ -126,6 +126,20 @@ export interface AwsJwtStsProps {
    * pending kms key name
    */
   readonly pendingKeyName?: string
+
+  /**
+   * optional custom certificate for the oidc discovery, default: oidc.<hostedZoneName>
+   *
+   * This certificate is used for the discovery endpoint and should be in us-east-1
+   */
+  readonly oidcCertificate?: ICertificate;
+
+  /**
+   * optional custom certificate for the token api, default: token.<hostedZoneName>
+   *
+   * This certificate is used for the discovery endpoint and should be in us-east-1
+   */
+  readonly tokenCertificate?: ICertificate;
 }
 
 /* eslint-disable no-new */
@@ -167,13 +181,16 @@ export class AwsJwtSts extends Construct {
         }
       )
 
-      oidcCertificate = new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
+      // can still be used for now: https://github.com/aws/aws-cdk/discussions/23931#discussioncomment-5889140
+      // feature request: https://github.com/aws/aws-cdk/issues/25343
+      // underlying cloudformation issue:
+      oidcCertificate = props.oidcCertificate ?? new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
         domainName: oidcDomainName,
         hostedZone,
         region: 'us-east-1'
       })
 
-      tokenCertificate = new acm.Certificate(this, 'tokenCertificate', {
+      tokenCertificate = props.tokenCertificate ?? new acm.Certificate(this, 'tokenCertificate', {
         domainName: tokenDomainName,
         validation: acm.CertificateValidation.fromDns(hostedZone)
       })
