@@ -11,3 +11,6 @@ cdk.out
 
 dist
 coverage
+
+# Allow eslint 9.x.x config
+!eslint.config.js

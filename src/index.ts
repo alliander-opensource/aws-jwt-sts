@@ -1,34 +1,35 @@
 // SPDX-FileCopyrightText: 2023 Alliander NV
 //
 // SPDX-License-Identifier: Apache-2.0
-
-/* eslint-disable no-unused-vars */
+/* eslint-disable max-statements, max-lines-per-function*/
+import {
+  aws_certificatemanager as acm,
+  aws_apigateway as apigateway,
+  aws_cloudfront as cloudfront,
+  aws_cloudfront_origins as cloudfrontOrigins,
+  aws_cloudwatch as cloudwatch,
+  aws_events as events,
+  aws_iam as iam,
+  aws_lambda as lambda,
+  aws_lambda_nodejs as lambdaNodejs,
+  aws_logs as logs,
+  aws_route53 as route53,
+  aws_route53_targets as route53targets,
+  aws_s3 as s3,
+  aws_stepfunctions as sfn,
+  aws_sns as sns,
+  aws_events_targets as targets,
+  aws_stepfunctions_tasks as tasks,
+  aws_wafv2 as wafv2,
+} from 'aws-cdk-lib'
 import * as cdk from 'aws-cdk-lib'
-import * as lambda from 'aws-cdk-lib/aws-lambda'
-import * as sfn from 'aws-cdk-lib/aws-stepfunctions'
-import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks'
-import * as iam from 'aws-cdk-lib/aws-iam'
-import { OrganizationPrincipal, PolicyDocument } from 'aws-cdk-lib/aws-iam'
-import * as s3 from 'aws-cdk-lib/aws-s3'
-import { BucketEncryption } from 'aws-cdk-lib/aws-s3'
-import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
-import * as cloudfrontOrigins from 'aws-cdk-lib/aws-cloudfront-origins'
-import * as events from 'aws-cdk-lib/aws-events'
-import * as targets from 'aws-cdk-lib/aws-events-targets'
-import * as acm from 'aws-cdk-lib/aws-certificatemanager'
-import * as route53 from 'aws-cdk-lib/aws-route53'
-import * as route53targets from 'aws-cdk-lib/aws-route53-targets'
-import * as apigateway from 'aws-cdk-lib/aws-apigateway'
 import { MethodLoggingLevel } from 'aws-cdk-lib/aws-apigateway'
-import * as wafv2 from 'aws-cdk-lib/aws-wafv2'
-import * as sns from 'aws-cdk-lib/aws-sns'
-import * as logs from 'aws-cdk-lib/aws-logs'
-import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch'
-import { TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch'
-import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs'
-import { Construct } from 'constructs'
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager'
+import { TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch'
+import { OrganizationPrincipal, PolicyDocument } from 'aws-cdk-lib/aws-iam'
 import { IHostedZone } from 'aws-cdk-lib/aws-route53'
+import { BucketEncryption } from 'aws-cdk-lib/aws-s3'
+import { Construct } from 'constructs'
 
 export enum wafUsage {
   ConstructProvided,
@@ -37,7 +38,7 @@ export enum wafUsage {
 
 export interface AwsJwtStsProps {
   /**
-   * defaultAudience which is used in de JWT's
+   * DefaultAudience which is used in de JWT's
    */
   readonly defaultAudience: string;
 
@@ -113,22 +114,36 @@ export interface AwsJwtStsProps {
   readonly alarmNameKeyRotationLambdaFailed?: string
 
   /**
-   * current kms key name
+   * Current kms key name
    */
   readonly currentKeyName?: string
 
   /**
-   * previous kms key name
+   * Previous kms key name
    */
   readonly previousKeyName?: string
 
   /**
-   * pending kms key name
+   * Pending kms key name
    */
   readonly pendingKeyName?: string
+
+  /**
+   * Optional custom certificate for the oidc discovery, default: oidc.<hostedZoneName>
+   *
+   * This certificate is used for the discovery endpoint and should be in us-east-1
+   */
+  readonly oidcCertificate?: ICertificate;
+
+  /**
+   * Optional custom certificate for the token api, default: token.<hostedZoneName>
+   *
+   * This certificate is used for the token api and should be in the same region as the API Gateway
+   */
+  readonly tokenCertificate?: ICertificate;
 }
 
-/* eslint-disable no-new */
+
 export class AwsJwtSts extends Construct {
   /**
    * SNS topic used to publish errors from the Step Function rotation flow
@@ -158,22 +173,20 @@ export class AwsJwtSts extends Construct {
 
       distributionDomainNames = [oidcDomainName]
 
-      hostedZone = route53.HostedZone.fromHostedZoneAttributes(
-        this,
-        'hostedZone',
-        {
-          zoneName: props.hostedZoneName!,
-          hostedZoneId: props.hostedZoneId!
-        }
-      )
-
-      oidcCertificate = new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
+      // Can still be used for now: https://github.com/aws/aws-cdk/discussions/23931#discussioncomment-5889140
+      // Feature request: https://github.com/aws/aws-cdk/issues/25343
+      // Underlying cloudformation issue: https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/523
+      oidcCertificate = props.oidcCertificate ?? new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
         domainName: oidcDomainName,
-        hostedZone,
+        hostedZone: route53.HostedZone.fromHostedZoneAttributes(this,'lookupHostedZone',
+          {
+            zoneName: props.hostedZoneName!,
+            hostedZoneId: props.hostedZoneId!
+          }),
         region: 'us-east-1'
       })
 
-      tokenCertificate = new acm.Certificate(this, 'tokenCertificate', {
+      tokenCertificate = props.tokenCertificate ?? new acm.Certificate(this, 'tokenCertificate', {
         domainName: tokenDomainName,
         validation: acm.CertificateValidation.fromDns(hostedZone)
       })
@@ -219,7 +232,7 @@ export class AwsJwtSts extends Construct {
     })
     const rotateKeys = new lambdaNodejs.NodejsFunction(this, 'keyrotate', {
       timeout: cdk.Duration.seconds(5),
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       role: rotateKeysRole,
       architecture,
       environment: {
@@ -237,7 +250,7 @@ export class AwsJwtSts extends Construct {
     })
     const sign = new lambdaNodejs.NodejsFunction(this, 'sign', {
       timeout: cdk.Duration.seconds(5),
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_22_X,
       role: signRole,
       architecture,
       environment: {
@@ -393,7 +406,7 @@ export class AwsJwtSts extends Construct {
 
     /** ---------------------- API Gateway ----------------------- */
 
-    // only set policy when orgId is set
+    // Only set policy when orgId is set
     let apiPolicy: PolicyDocument | undefined
     if (props.orgId) {
       apiPolicy = new iam.PolicyDocument({

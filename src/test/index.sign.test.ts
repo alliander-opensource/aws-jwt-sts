@@ -1,21 +1,18 @@
 // SPDX-FileCopyrightText: 2023 Alliander NV
 //
 // SPDX-License-Identifier: Apache-2.0
-
-import { APIGatewayProxyEvent, Context } from 'aws-lambda'
-import { mockClient } from 'aws-sdk-client-mock'
-/* eslint-disable camelcase */
-import jwt_decode from 'jwt-decode'
-
+/* eslint-disable import/no-unresolved */
 import {
-  KMSClient,
   DescribeKeyCommand,
+  KMSClient,
   ListResourceTagsCommand,
   SignCommand
 } from '@aws-sdk/client-kms'
+import { APIGatewayProxyEvent, Context } from 'aws-lambda'
+import { mockClient } from 'aws-sdk-client-mock'
+import { jwtDecode as jwt_decode } from 'jwt-decode'
 
-process.env.CURRENT_KEY = 'key-1'// set env var as it is called on load of the file
-// eslint-disable-next-line import/first
+process.env.CURRENT_KEY = 'key-1'// Set env var as it is called on load of the file
 import { handler } from '../index.sign'
 
 const kmsMock = mockClient(KMSClient)
@@ -158,7 +155,7 @@ describe('handlers/sign/sign.ts', () => {
 
     expect(response.statusCode).toEqual(200)
     const responseBody = JSON.parse(response.body)
-    const token = responseBody.token
+    const {token} = responseBody
 
     const decodedHeader: any = jwt_decode(token, { header: true })
 

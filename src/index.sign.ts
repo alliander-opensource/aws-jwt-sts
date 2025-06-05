@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda'
-import { KMSClient, SignCommand, DescribeKeyCommand, ListResourceTagsCommand, Tag } from '@aws-sdk/client-kms'
-import base64url from 'base64url'
-
 import { Logger } from '@aws-lambda-powertools/logger'
+import { DescribeKeyCommand, KMSClient, ListResourceTagsCommand, SignCommand, Tag } from '@aws-sdk/client-kms'
+/* eslint-disable-next-line import/no-unresolved */
+import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
+import base64url from 'base64url'
 
 const KEY_ALIAS_CURRENT = process.env.CURRENT_KEY!.toString()
 const logger = new Logger()
@@ -53,11 +53,11 @@ export const handler = async (apiEvent: APIGatewayEvent, context: Context): Prom
     kid: `${kid}`
   }
 
-  // prepare token lifetime property values
+  // Prepare token lifetime property values
   const issuedAtDate = new Date()
   const expirationDate = new Date(issuedAtDate)
   const notBeforeDate = new Date(issuedAtDate)
-  expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000) // valid for one hour
+  expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000) // Valid for one hour
   notBeforeDate.setTime(notBeforeDate.getTime() - 5 * 60 * 1000) // 5m before issuedAtDate
 
   // JWT Token payload
@@ -113,13 +113,13 @@ function getARNFromIdentity (identityArn: string | null) {
   // Regex for converting arn to base role
   const captGroups = [
     'arn:aws:sts:',
-    '(?<regionName>[^:]*)', // group 1
+    '(?<regionName>[^:]*)', // Group 1
     ':',
-    '(?<accountId>\\d{12})', // group 2
+    '(?<accountId>\\d{12})', // Group 2
     ':assumed-role\\/',
-    '(?<roleName>[A-z0-9\\-]+?)', // group 3
+    '(?<roleName>[A-z0-9\\-]+?)', // Group 3
     '\\/',
-    '(?<user>[^:]*)', // group 4
+    '(?<user>[^:]*)', // Group 4
     '$'
   ]
 

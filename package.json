@@ -1,6 +1,6 @@
 {
   "name": "@alliander-opensource/aws-jwt-sts",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "author": {
     "name": "Alliander NV"
   },
@@ -17,40 +17,45 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "watch": "tsc -w",
-    "test": "jest --coverage",
+    "test": "npx jest --coverage",
     "cdk": "cdk",
     "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "@types/node": "^18.15.11",
-    "@types/prettier": "2.7.3",
-    "@typescript-eslint/eslint-plugin": "^7.11.0",
-    "@typescript-eslint/parser": "^7.11.0",
-    "aws-cdk": "^2.148.1",
+    "@types/aws-lambda": "^8.10.149",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.29",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "aws-cdk": "^2.1017.1",
     "aws-sdk-client-mock": "^4.0.0",
-    "esbuild": "^0.21.4",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.28.1",
-    "eslint-plugin-jest": "^27.2.3",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-promise": "^6.2.0",
+    "esbuild": "^0.25.5",
+    "eslint": "^9.28.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jest": "^28.12.0",
+    "eslint-plugin-n": "^17.19.0",
+    "eslint-plugin-promise": "^7.2.1",
+    "glob": "^9.3.5",
     "jest": "^29.7.0",
-    "jwt-decode": "^3.1.2",
-    "ts-jest": "^29.1.4",
+    "jwt-decode": "^4.0.0",
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
-    "typescript": "~5.4.5"
+    "typescript": "~5.8.3"
   },
   "peerDependencies": {
-    "@aws-lambda-powertools/logger": "^2.1.1",
-    "@aws-sdk/client-kms": "^3.664.0",
-    "@aws-sdk/client-s3": "^3.664.0",
-    "@types/aws-lambda": "^8.10.138",
-    "@types/jsrsasign": "^10.5.14",
-    "aws-cdk-lib": "^2.143.1",
+    "@aws-lambda-powertools/logger": "^2.21.0",
+    "@aws-sdk/client-kms": "^3.823.0",
+    "@aws-sdk/client-s3": "^3.823.0",
+    "@types/aws-lambda": "^8.10.149",
+    "@types/jsrsasign": "^10.5.15",
+    "aws-cdk-lib": "^2.200.1",
     "base64url": "^3.0.1",
-    "constructs": "^10.3.0",
+    "constructs": "^10.4.2",
     "jsrsasign": "^11.1.0",
     "source-map-support": "^0.5.21"
+  },
+  "overrides": {
+    "glob": "$glob"
   }
 }
