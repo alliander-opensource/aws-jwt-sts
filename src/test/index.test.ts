@@ -2,9 +2,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable no-new */
+
 import * as cdk from 'aws-cdk-lib'
 import { Match, Template } from 'aws-cdk-lib/assertions'
+
+/* eslint-disable-next-line import/no-unresolved */
 import { AwsJwtSts } from '../index'
 
 test('creates sts construct correctly', () => {
@@ -15,7 +17,7 @@ test('creates sts construct correctly', () => {
 
   const template = Template.fromStack(stack)
   template.hasResourceProperties('AWS::Lambda::Function', Match.objectLike({
-    Runtime: 'nodejs18.x'
+    Runtime: 'nodejs22.x'
   }))
 
   template.hasResourceProperties('AWS::Events::Rule', Match.objectLike(
