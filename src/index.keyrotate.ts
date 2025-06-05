@@ -3,18 +3,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  KMSClient,
+  CreateAliasCommand,
+  CreateKeyCommand,
   DescribeKeyCommand,
   GetPublicKeyCommand,
-  CreateKeyCommand,
-  UpdateAliasCommand,
-  ScheduleKeyDeletionCommand,
-  TagResourceCommand,
-  Tag,
+  KMSClient,
   NotFoundException,
-  CreateAliasCommand
+  ScheduleKeyDeletionCommand,
+  Tag,
+  TagResourceCommand,
+  UpdateAliasCommand
 } from '@aws-sdk/client-kms'
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { KEYUTIL, KJUR } from 'jsrsasign'
 
 const client = new KMSClient({})
@@ -30,10 +30,10 @@ const ALIASES: string[] = [
 ]
 
 export const handler = async (event: any): Promise<any> => {
-  // retrieve the step from the event
-  const step = (event.step)
+  // Retrieve the step from the event
+  const {step} = event
 
-  // match the step with the corresponding function
+  // Match the step with the corresponding function
   switch (step) {
     case 'deletePrevious':
       await deletePrevious()
@@ -192,13 +192,13 @@ async function generateJWK (keyAlias: string): Promise<any> {
   // Get the public key from kms
   const getPubKeyResponse = await client.send(new GetPublicKeyCommand({ KeyId: keyAlias }))
 
-  // generate HEX format from the response (DER)
+  // Generate HEX format from the response (DER)
   const pubKeyHex = Buffer.from(getPubKeyResponse.PublicKey as Uint8Array).toString('hex')
 
   // Get the pub key in pem format
   const pubKeyPem = KJUR.asn1.ASN1Util.getPEMStringFromHex(pubKeyHex, 'PUBLIC KEY')
 
-  // return the JWK format for the key
+  // Return the JWK format for the key
   const jwk: any = KEYUTIL.getJWK(pubKeyPem)
 
   jwk.use = 'sig'
@@ -212,7 +212,7 @@ async function setKMSKeyTags (keyAlias: string, tags: Tag[]) {
 }
 
 async function uploadToS3 (key: string, contents: object) {
-  // get S3 bucket from environment variables
+  // Get S3 bucket from environment variables
   const s3Bucket = process.env.S3_BUCKET
 
   const s3client = new S3Client({})
