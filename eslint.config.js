@@ -13,8 +13,8 @@ module.exports = [
       "cdk.out/**",
       "node_modules/**",
       "**/*.js",
-      "**/*.mjs", 
-      "**/*.cjs", 
+      "**/*.mjs",
+      "**/*.cjs",
       "**/*.d.ts"
     ]
   },
@@ -51,7 +51,7 @@ module.exports = [
       "one-var": "off",
       "max-classes-per-file": "off", // Off for CDK stack files
       "no-console": "off",  // Allow console in CDK project
-      
+
       // Warning level rules
       "no-unused-vars": "warn",
       "no-undef": "warn",
@@ -62,12 +62,12 @@ module.exports = [
       "max-lines-per-function": ["warn", { "max": 150 }], // Increased for CDK methods
       "max-statements": ["warn", 50],
       "prefer-destructuring": "warn",
-      
+
       // Error level rules
       "prefer-const": "error",
       "no-var": "error",
       "no-duplicate-imports": "error",
-      
+
       // Import plugin rules
       "import/no-unresolved": "error",
       "import/no-duplicates": "error",
@@ -76,7 +76,7 @@ module.exports = [
         "newlines-between": "always",
         "alphabetize": { "order": "asc", "caseInsensitive": true }
       }],
-      
+
       // TypeScript specific rules
       "@typescript-eslint/explicit-function-return-type": ["warn", {
         "allowExpressions": true,
@@ -84,7 +84,7 @@ module.exports = [
       }],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-      
+
       // Jest plugin rules
       "jest/no-disabled-tests": "warn",
       "jest/no-focused-tests": "error",

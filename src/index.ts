@@ -143,7 +143,7 @@ export interface AwsJwtStsProps {
   readonly tokenCertificate?: ICertificate;
 }
 
- 
+
 export class AwsJwtSts extends Construct {
   /**
    * SNS topic used to publish errors from the Step Function rotation flow

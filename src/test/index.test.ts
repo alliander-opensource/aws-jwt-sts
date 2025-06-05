@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
- 
+
 import * as cdk from 'aws-cdk-lib'
 import { Match, Template } from 'aws-cdk-lib/assertions'
 
