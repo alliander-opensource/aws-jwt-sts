@@ -28,7 +28,7 @@
         "module": "alliander-opensource.aws-jwt-sts"
       }
     }
-  }, 
+  },
   "exports": {
     ".": "./dist/index.js"
   },

@@ -143,7 +143,6 @@ export interface AwsJwtStsProps {
   readonly tokenCertificate?: ICertificate;
 }
 
-
 export class AwsJwtSts extends Construct {
   /**
    * SNS topic used to publish errors from the Step Function rotation flow
@@ -179,7 +178,7 @@ export class AwsJwtSts extends Construct {
           hostedZoneId: props.hostedZoneId!,
         },
       );
-      
+
       distributionDomainNames = [oidcDomainName]
 
       // Can still be used for now: https://github.com/aws/aws-cdk/discussions/23931#discussioncomment-5889140

@@ -216,11 +216,11 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
       .on(DescribeKeyCommand).resolves({ KeyMetadata: { KeyId: 'key-1' } })
       .on(ListResourceTagsCommand).resolves({ Tags: [{ TagKey: 'jwk_kid', TagValue: 'thekid' }] })
       .on(SignCommand).resolves({ Signature: Buffer.from('sig') })
-    
+
       const event = {
       requestContext: { identity: { userArn: VALID_IDENTITY_USER_ARN } }
     } as any
-    
+
     env.DEFAULT_AUDIENCE = 'default-aud'
     env.ISSUER = 'https://default-issuer.com'
 
@@ -228,7 +228,6 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
     const token = JSON.parse(response.body).token
     expect(response.statusCode).toBe(200)
     expect(token).toBeDefined()
-
 
     const decodedToken: any = jwt_decode(token)
     expect(decodedToken.aud).toBe(process.env.DEFAULT_AUDIENCE)
@@ -251,7 +250,6 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
     const token = JSON.parse(response.body).token
     expect(response.statusCode).toBe(200)
     expect(token).toBeDefined()
-
 
     const decodedToken: any = jwt_decode(token)
     expect(decodedToken.iss).toBeUndefined()
