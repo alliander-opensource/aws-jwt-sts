@@ -31,9 +31,9 @@ import { IHostedZone } from 'aws-cdk-lib/aws-route53'
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3'
 import { Construct } from 'constructs'
 
-export enum wafUsage {
-  ConstructProvided,
-  ProvideWebAclArn
+export enum WafUsage {
+  CONSTRUCT_PROVIDED,
+  PROVIDE_WEB_ACL_ARN
 }
 
 export interface AwsJwtStsProps {
@@ -69,7 +69,7 @@ export interface AwsJwtStsProps {
    * ConstructProvided: the construct will deploy a wafAcl with opinionated rules
    * ProvideWebAclArn: provide your own arn
    */
-  readonly apiGwWaf?: wafUsage;
+  readonly apiGwWaf?: WafUsage;
 
   /**
    * Arn of the waf webAcl rule to be associated with the API GW
@@ -486,7 +486,7 @@ export class AwsJwtSts extends Construct {
 
     /** ---------------------- WAF ----------------------- */
 
-    if (props.apiGwWaf === wafUsage.ConstructProvided) {
+    if (props.apiGwWaf === WafUsage.CONSTRUCT_PROVIDED) {
       // API gateway WAF ACL and rules
       const APIGatewayWebACL = new wafv2.CfnWebACL(this, 'APIGatewayWebACL', {
         description: 'This is WebACL for Auth APi Gateway',
@@ -573,7 +573,7 @@ export class AwsJwtSts extends Construct {
         webAclArn: APIGatewayWebACL.attrArn,
         resourceArn: api.deploymentStage.stageArn
       })
-    } else if (props.apiGwWaf === wafUsage.ProvideWebAclArn && props.apiGwWafWebAclArn) {
+    } else if (props.apiGwWaf === WafUsage.PROVIDE_WEB_ACL_ARN && props.apiGwWafWebAclArn) {
       // Web ACL Association
       new wafv2.CfnWebACLAssociation(this, 'APIGatewayWebACLAssociation', {
         webAclArn: props.apiGwWafWebAclArn,
