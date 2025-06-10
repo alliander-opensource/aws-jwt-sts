@@ -14,6 +14,7 @@ import { jwtDecode as jwt_decode } from 'jwt-decode'
 
 process.env.CURRENT_KEY = 'key-1'// Set env var as it is called on load of the file
 import { handler } from '../index.sign'
+import { env } from 'process'
 
 const kmsMock = mockClient(KMSClient)
 
@@ -172,6 +173,143 @@ describe('handlers/sign/sign.ts', () => {
 
     const tokenParts = responseBody.token.split('.')
     expect(tokenParts[2]).toEqual(`${b64Signature.replace('==', '')}`)
+  })
+})
+
+describe('handlers/sign/sign.ts - additional coverage', () => {
+  const CONTEXT = {} as any
+  const OLD_ENV = process.env
+  const kmsMock = mockClient(KMSClient)
+
+  beforeEach(() => {
+    jest.resetModules()
+    kmsMock.reset()
+    process.env = { ...OLD_ENV }
+  })
+
+  afterEach(() => {
+    kmsMock.reset()
+    process.env = OLD_ENV
+  })
+
+  test('should use aud from queryStringParameters', async () => {
+    kmsMock
+      .on(DescribeKeyCommand).resolves({ KeyMetadata: { KeyId: 'key-1' } })
+      .on(ListResourceTagsCommand).resolves({ Tags: [{ TagKey: 'jwk_kid', TagValue: 'thekid' }] })
+      .on(SignCommand).resolves({ Signature: Buffer.from('sig') })
+    const event = {
+      requestContext: { identity: { userArn: VALID_IDENTITY_USER_ARN } },
+      queryStringParameters: { aud: 'custom-aud' }
+    } as any
+    const response = await handler(event, CONTEXT)
+    let token = JSON.parse(response.body).token
+
+    expect(response.statusCode).toBe(200)
+    expect(token).toBeDefined()
+
+    const decodedToken: any = jwt_decode(token)
+    expect(decodedToken.aud).toBe('custom-aud')
+  })
+
+  test('should handle missing queryStringParameters', async () => {
+    kmsMock
+      .on(DescribeKeyCommand).resolves({ KeyMetadata: { KeyId: 'key-1' } })
+      .on(ListResourceTagsCommand).resolves({ Tags: [{ TagKey: 'jwk_kid', TagValue: 'thekid' }] })
+      .on(SignCommand).resolves({ Signature: Buffer.from('sig') })
+    
+      const event = {
+      requestContext: { identity: { userArn: VALID_IDENTITY_USER_ARN } }
+    } as any
+    
+    env.DEFAULT_AUDIENCE = 'default-aud'
+    env.ISSUER = 'https://default-issuer.com'
+
+    const response = await handler(event, CONTEXT)
+    const token = JSON.parse(response.body).token
+    expect(response.statusCode).toBe(200)
+    expect(token).toBeDefined()
+
+
+    const decodedToken: any = jwt_decode(token)
+    expect(decodedToken.aud).toBe(process.env.DEFAULT_AUDIENCE)
+    expect(decodedToken.iss).toBe(process.env.ISSUER)
+    expect(decodedToken.sub).toBe('arn:aws:iam:eu-central-1:123456789012:role/this-is-my-role-name')
+  })
+
+  test('should handle missing ISSUER env', async () => {
+    kmsMock
+      .on(DescribeKeyCommand).resolves({ KeyMetadata: { KeyId: 'key-1' } })
+      .on(ListResourceTagsCommand).resolves({ Tags: [{ TagKey: 'jwk_kid', TagValue: 'thekid' }] })
+      .on(SignCommand).resolves({ Signature: Buffer.from('sig') })
+
+    env.DEFAULT_AUDIENCE = 'default-aud'
+    process.env.ISSUER = undefined
+    const event = {
+      requestContext: { identity: { userArn: VALID_IDENTITY_USER_ARN } }
+    } as any
+    const response = await handler(event, CONTEXT)
+    const token = JSON.parse(response.body).token
+    expect(response.statusCode).toBe(200)
+    expect(token).toBeDefined()
+
+
+    const decodedToken: any = jwt_decode(token)
+    expect(decodedToken.iss).toBeUndefined()
+    expect(decodedToken.aud).toBe(process.env.DEFAULT_AUDIENCE)
+    expect(decodedToken.sub).toBe('arn:aws:iam:eu-central-1:123456789012:role/this-is-my-role-name')
+  })
+
+  test('should handle missing tag value in getTagValueFromTags', async () => {
+    kmsMock
+      .on(DescribeKeyCommand).resolves({ KeyMetadata: { KeyId: 'key-1' } })
+      .on(ListResourceTagsCommand).resolves({ Tags: [{ TagKey: 'not_jwk_kid', TagValue: 'nope' }] })
+    const event = {
+      requestContext: { identity: { userArn: VALID_IDENTITY_USER_ARN } }
+    } as any
+    const response = await handler(event, CONTEXT)
+    expect(response.statusCode).toBe(500)
+    expect(response.body).toEqual('KMS key is not correctly tagged')
+  })
+
+  test('should handle missing KeyId in DescribeKeyCommand', async () => {
+    kmsMock.on(DescribeKeyCommand).resolves({})
+    const event = {
+      requestContext: { identity: { userArn: VALID_IDENTITY_USER_ARN } }
+    } as any
+    const response = await handler(event, CONTEXT)
+    expect(response.statusCode).toBe(500)
+    expect(response.body).toEqual('KMS key could not be retrieved')
+  })
+
+  test('should handle missing userArn', async () => {
+    const event = {
+      requestContext: { identity: {} }
+    } as any
+    const response = await handler(event, CONTEXT)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual('Unable to resolve identity')
+  })
+
+  test('should handle completely invalid arn', async () => {
+    const event = {
+      requestContext: { identity: { userArn: 'not-an-arn' } }
+    } as any
+    const response = await handler(event, CONTEXT)
+    expect(response.statusCode).toBe(400)
+    expect(response.body).toEqual('Unable to resolve identity')
+  })
+
+  test('should handle error when ListResourceTagsCommand returns undefined', async () => {
+    kmsMock
+      .on(DescribeKeyCommand).resolves({ KeyMetadata: { KeyId: 'key-1' } })
+      .on(ListResourceTagsCommand).resolves({ undefined } as any ) // Simulating undefined response
+
+    const event = {
+      requestContext: { identity: { userArn: VALID_IDENTITY_USER_ARN } }
+    } as any
+    const response = await handler(event, CONTEXT)
+    expect(response.statusCode).toBe(500)
+    expect(response.body).toEqual('KMS key is not correctly tagged')
   })
 })
 

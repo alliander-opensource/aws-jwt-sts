@@ -72,3 +72,126 @@ test('creates sts construct with custom alarm names', () => {
     AlarmName: 'alarm-sign-lambda-failed'
   }))
 })
+
+test('creates sts construct with custom domain name', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithCustomDomain', {
+    defaultAudience: 'api://default-aud',
+    hostedZoneId: 'test-zone-id',
+    hostedZoneName: 'test-zone-name',
+    oidcSubdomain: 'test-oidc',
+    tokenSubdomain: 'test-token',
+  })
+
+  const template = Template.fromStack(stack)
+  template.resourceCountIs('AWS::Route53::RecordSet',2) // One for OIDC and one for Token
+  template.resourceCountIs('AWS::ApiGateway::BasePathMapping', 1) // sts API Gateway mapping
+
+})
+
+test('creates sts construct with orgId and policy', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithOrgId', {
+    defaultAudience: 'api://default-aud',
+    orgId: 'o-1234567890'
+  })
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::IAM::Policy', Match.anyValue())
+})
+
+test('creates sts construct with WAF provided by construct', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithWaf', {
+    defaultAudience: 'api://default-aud',
+    apiGwWaf: 0 // WafUsage.CONSTRUCT_PROVIDED
+  })
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::WAFv2::WebACL', Match.anyValue())
+  template.hasResourceProperties('AWS::WAFv2::WebACLAssociation', Match.anyValue())
+})
+
+test('creates sts construct with WAF using provided ARN', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithWafArn', {
+    defaultAudience: 'api://default-aud',
+    apiGwWaf: 1, // WafUsage.PROVIDE_WEB_ACL_ARN
+    apiGwWafWebAclArn: 'arn:aws:wafv2:region:account-id:global/webacl/name/id'
+  })
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::WAFv2::WebACLAssociation', Match.objectLike({
+    WebACLArn: 'arn:aws:wafv2:region:account-id:global/webacl/name/id'
+  }))
+})
+
+test('creates sts construct with all custom key names', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithCustomKeys', {
+    defaultAudience: 'api://default-aud',
+    currentKeyName: 'custom-current',
+    previousKeyName: 'custom-previous',
+    pendingKeyName: 'custom-pending',
+  })
+  const template = Template.fromStack(stack)
+  //add assertions for the custom key names
+  template.hasResourceProperties('AWS::Lambda::Function', Match.objectLike({
+    Environment: {
+      Variables: {
+        CURRENT_KEY: 'alias/custom-current',
+        PREVIOUS_KEY: 'alias/custom-previous',
+        PENDING_KEY: 'alias/custom-pending'
+      }
+    }
+  }))
+})
+
+test('creates sts construct with custom certificates', () => {
+  const stack = new cdk.Stack()
+  // Mock ICertificate
+  const cert = { certificateArn: 'arn:aws:acm:us-east-1:account:certificate/123' } as any
+  new AwsJwtSts(stack, 'WithCerts', {
+    defaultAudience: 'api://default-aud',
+    hostedZoneId: 'zone-id',
+    hostedZoneName: 'zone.name',
+    oidcCertificate: cert,
+    tokenCertificate: cert
+  })
+  const template = Template.fromStack(stack)
+  template.resourceCountIs('AWS::CertificateManager::Certificate', 0)
+})
+
+test('creates sts construct with all custom alarm names and disables key rotation on create', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'AllCustomAlarms', {
+    defaultAudience: 'api://default-aud',
+    alarmNameApiGateway5xx: 'api5xx',
+    alarmNameKeyRotationLambdaFailed: 'keyrotatelambda',
+    alarmNameKeyRotationStepFunctionFailed: 'keyrotatesfn',
+    alarmNameSignLambdaFailed: 'signlambda',
+    disableKeyRotateOnCreate: true
+  })
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'api5xx'
+  }))
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'keyrotatelambda'
+  }))
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'keyrotatesfn'
+  }))
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: 'signlambda'
+  }))
+})
+
+test('can create the lambdas with a different architecture', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithArmLambdas', {
+    defaultAudience: 'api://default-aud',
+    architecture: cdk.aws_lambda.Architecture.ARM_64
+  })
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::Lambda::Function', Match.objectLike({
+    Architectures: [cdk.aws_lambda.Architecture.ARM_64.toString()]
+  }))
+})
