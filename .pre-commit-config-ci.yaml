@@ -12,4 +12,4 @@ repos:
       - id: eslint
         files: \.ts$  # only typescript files
         types: [ file ]
-        args: [--fix --quiet]
+        args: [--fix --cache --max-warnings=-1]
