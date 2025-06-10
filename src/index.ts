@@ -171,6 +171,15 @@ export class AwsJwtSts extends Construct {
       oidcDomainName = oidcSubdomain + '.' + props.hostedZoneName
       tokenDomainName = tokenSubdomain + '.' + props.hostedZoneName
 
+      hostedZone = route53.HostedZone.fromHostedZoneAttributes(
+        this,
+        "lookedupHostedZone",
+        {
+          zoneName: props.hostedZoneName!,
+          hostedZoneId: props.hostedZoneId!,
+        },
+      );
+      
       distributionDomainNames = [oidcDomainName]
 
       // Can still be used for now: https://github.com/aws/aws-cdk/discussions/23931#discussioncomment-5889140
@@ -178,11 +187,7 @@ export class AwsJwtSts extends Construct {
       // Underlying cloudformation issue: https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/523
       oidcCertificate = props.oidcCertificate ?? new acm.DnsValidatedCertificate(this, 'CrossRegionCertificate', {
         domainName: oidcDomainName,
-        hostedZone: route53.HostedZone.fromHostedZoneAttributes(this,'lookupHostedZone',
-          {
-            zoneName: props.hostedZoneName!,
-            hostedZoneId: props.hostedZoneId!
-          }),
+        hostedZone,
         region: 'us-east-1'
       })
 
