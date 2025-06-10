@@ -202,7 +202,7 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
       queryStringParameters: { aud: 'custom-aud' }
     } as any
     const response = await handler(event, CONTEXT)
-    let token = JSON.parse(response.body).token
+    const token = JSON.parse(response.body).token
 
     expect(response.statusCode).toBe(200)
     expect(token).toBeDefined()
