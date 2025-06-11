@@ -2,12 +2,12 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "target": "ES2018",
+    "target": "ES2022",
     "module": "commonjs",
     "lib": [
-      "es2018",
-      "dom"
+      "es2022"
     ],
+    "esModuleInterop": true,
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -29,10 +29,6 @@
     "strictPropertyInitialization": true,
     "stripInternal": false,
     "composite": false,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@types/node"
-    ],
     "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
   },
   "exclude": [

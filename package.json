@@ -1,21 +1,39 @@
 {
   "name": "@alliander-opensource/aws-jwt-sts",
+  "license": "MIT",
   "version": "0.3.3",
   "author": {
     "name": "Alliander NV"
   },
-  "main": "dist/index.js",
-  "files": [
-    "dist/*",
-    "src/*"
-  ],
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/alliander-opensource/aws-jwt-sts.git"
   },
+  "main": "dist/index.js",
+  "files": [
+    "dist/*"
+  ],
+  "types": "dist/index.d.ts",
+  "keywords": ["awscdk"],
+  "jsii": {
+    "tsc": {
+      "rootDir": "src",
+      "outDir": "dist"
+    },
+    "outdir": "jsii",
+    "versionFormat": "full",
+    "targets": {
+      "python": {
+        "distName": "alliander-opensource-aws-jwt-sts",
+        "module": "alliander-opensource.aws-jwt-sts"
+      }
+    }
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
-    "build": "rm -rf dist && tsc",
+    "build": "./build.sh",
     "watch": "tsc -w",
     "test": "npx jest --coverage",
     "cdk": "cdk",
@@ -27,6 +45,8 @@
     "@types/node": "^22.15.29",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
+    "aws-cdk-lib": "2.200.1",
+    "constructs": "10.4.2",
     "aws-cdk": "^2.1017.1",
     "aws-sdk-client-mock": "^4.0.0",
     "esbuild": "^0.25.5",
@@ -36,7 +56,8 @@
     "eslint-plugin-n": "^17.19.0",
     "eslint-plugin-promise": "^7.2.1",
     "glob": "^9.3.5",
-    "jest": "^29.7.0",
+    "jest": "^30.0.0",
+    "jsii": "^5.8.12",
     "jwt-decode": "^4.0.0",
     "prettier": "^3.5.3",
     "ts-jest": "^29.3.4",
@@ -44,18 +65,29 @@
     "typescript": "~5.8.3"
   },
   "peerDependencies": {
+    "aws-cdk-lib": "^2.200.1",
+    "constructs": "^10.4.2"
+  },
+  "dependencies": {
     "@aws-lambda-powertools/logger": "^2.21.0",
     "@aws-sdk/client-kms": "^3.823.0",
     "@aws-sdk/client-s3": "^3.823.0",
     "@types/aws-lambda": "^8.10.149",
     "@types/jsrsasign": "^10.5.15",
-    "aws-cdk-lib": "^2.200.1",
     "base64url": "^3.0.1",
-    "constructs": "^10.4.2",
-    "jsrsasign": "^11.1.0",
-    "source-map-support": "^0.5.21"
+    "jsrsasign": "^11.1.0"
   },
+  "bundledDependencies":[
+    "@aws-lambda-powertools/logger",
+    "@aws-sdk/client-kms",
+    "@aws-sdk/client-s3",
+    "@types/aws-lambda",
+    "@types/jsrsasign",
+    "base64url",
+    "jsrsasign"
+  ],
   "overrides": {
-    "glob": "$glob"
+    "glob": "$glob",
+    "jest": "$jest"
   }
 }
