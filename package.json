@@ -40,39 +40,39 @@
     "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.149",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.29",
-    "@typescript-eslint/eslint-plugin": "^8.33.1",
-    "@typescript-eslint/parser": "^8.33.1",
-    "aws-cdk-lib": "2.200.1",
+    "@types/aws-lambda": "^8.10.150",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.4",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
+    "@typescript-eslint/parser": "^8.35.0",
+    "aws-cdk-lib": "2.202.0",
     "constructs": "10.4.2",
-    "aws-cdk": "^2.1017.1",
-    "aws-sdk-client-mock": "^4.0.0",
+    "aws-cdk": "^2.1019.2",
+    "aws-sdk-client-mock": "^4.1.0",
     "esbuild": "^0.25.5",
-    "eslint": "^9.28.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-jest": "^28.12.0",
-    "eslint-plugin-n": "^17.19.0",
+    "eslint": "^9.29.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jest": "^29.0.1",
+    "eslint-plugin-n": "^17.20.0",
     "eslint-plugin-promise": "^7.2.1",
     "glob": "^9.3.5",
-    "jest": "^30.0.0",
+    "jest": "^30.0.3",
     "jsii": "^5.8.12",
     "jwt-decode": "^4.0.0",
-    "prettier": "^3.5.3",
-    "ts-jest": "^29.3.4",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.3"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.200.1",
+    "aws-cdk-lib": "^2.202.0",
     "constructs": "^10.4.2"
   },
   "dependencies": {
-    "@aws-lambda-powertools/logger": "^2.21.0",
-    "@aws-sdk/client-kms": "^3.823.0",
-    "@aws-sdk/client-s3": "^3.823.0",
-    "@types/aws-lambda": "^8.10.149",
+    "@aws-lambda-powertools/logger": "^2.22.0",
+    "@aws-sdk/client-kms": "^3.838.0",
+    "@aws-sdk/client-s3": "^3.837.0",
+    "@types/aws-lambda": "^8.10.150",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
     "jsrsasign": "^11.1.0"
@@ -88,6 +88,8 @@
   ],
   "overrides": {
     "glob": "$glob",
-    "jest": "$jest"
+    "jest": "$jest",
+    "brace-expansion@1.1.11": "1.1.12",
+    "brace-expansion@2.0.1": "2.0.2"
   }
 }
