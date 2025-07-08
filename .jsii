@@ -6,17 +6,16 @@
     ]
   },
   "bundled": {
-    "@aws-lambda-powertools/logger": "^2.21.0",
-    "@aws-sdk/client-kms": "^3.823.0",
-    "@aws-sdk/client-s3": "^3.823.0",
-    "@types/aws-lambda": "^8.10.149",
+    "@aws-lambda-powertools/logger": "^2.22.0",
+    "@aws-sdk/client-kms": "^3.838.0",
+    "@aws-sdk/client-s3": "^3.837.0",
+    "@types/aws-lambda": "^8.10.150",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
-    "jsrsasign": "^11.1.0",
-    "source-map-support": "^0.5.21"
+    "jsrsasign": "^11.1.0"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.200.1",
+    "aws-cdk-lib": "^2.202.0",
     "constructs": "^10.4.2"
   },
   "dependencyClosure": {
@@ -1558,6 +1557,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_evidently"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_evs": {
+          "targets": {
+            "dotnet": {
+              "package": "Amazon.CDK.AWS.EVS"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.evs"
+            },
+            "python": {
+              "module": "aws_cdk.aws_evs"
             }
           }
         },
@@ -3981,7 +3993,7 @@
         "hasDefaultInterfaces": true
       }
     },
-    "tscRootDir": "C:/GHrepos/Work/aws-jwt-sts/src"
+    "tscRootDir": "C:/GHrepos/aws-jwt-sts/src"
   },
   "name": "@alliander-opensource/aws-jwt-sts",
   "readme": {
@@ -4009,7 +4021,7 @@
       "initializer": {
         "locationInModule": {
           "filename": "src/index.ts",
-          "line": 153
+          "line": 152
         },
         "parameters": [
           {
@@ -4035,7 +4047,7 @@
       "kind": "class",
       "locationInModule": {
         "filename": "src/index.ts",
-        "line": 147
+        "line": 146
       },
       "name": "AwsJwtSts",
       "properties": [
@@ -4046,7 +4058,7 @@
           "immutable": true,
           "locationInModule": {
             "filename": "src/index.ts",
-            "line": 151
+            "line": 150
           },
           "name": "failedRotationTopic",
           "type": {
@@ -4149,7 +4161,7 @@
         {
           "abstract": true,
           "docs": {
-            "remarks": "None: no waf is used\nConstructProvided: the construct will deploy a wafAcl with opinionated rules\nProvideWebAclArn: provide your own arn",
+            "remarks": "None: no waf is used\r\nConstructProvided: the construct will deploy a wafAcl with opinionated rules\r\nProvideWebAclArn: provide your own arn",
             "summary": "If waf needs to be added to the API GW."
           },
           "immutable": true,
@@ -4396,6 +4408,6 @@
       "symbolId": "src/index:WafUsage"
     }
   },
-  "version": "0.3.3",
-  "fingerprint": "lPC9nhcbPpECzLXCAl9J3usbrMJIiT/G+Aav2zwnh70="
+  "version": "0.3.5",
+  "fingerprint": "Q9FrMWKGT/DndF3CoXcCZ5aNrCzvMe/imYhhypssxwA="
 }
