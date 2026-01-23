@@ -208,9 +208,10 @@ export class AwsJwtSts extends Construct {
     })
 
     /** ------------------- Cloudfront Definition ------------------- */
-
-    const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'cloudfront-OAI', {
-      comment: 'OAI for oidc'
+    const cloudfrontOAC = new cloudfront.S3OriginAccessControl(this, 'CloudFrontOAC', {
+      description: `OAC for OIDC Cloudfront Distribution. part of '${cdk.Stack.of(this).stackName}'`,
+      originAccessControlName: `oidc-oac-${cdk.Stack.of(this).stackName}`,
+      signing: cloudfront.Signing.SIGV4_ALWAYS
     })
 
     const distribution = new cloudfront.Distribution(this, 'oidcDistribution', {
@@ -219,7 +220,10 @@ export class AwsJwtSts extends Construct {
       certificate: oidcCertificate,
       defaultRootObject: 'index.html',
       defaultBehavior: {
-        origin: new cloudfrontOrigins.S3Origin(oidcbucket, { originAccessIdentity: cloudfrontOAI }),
+        origin: cloudfrontOrigins.S3BucketOrigin.withOriginAccessControl(oidcbucket, {
+          originAccessControl: cloudfrontOAC,
+          originAccessLevels: [cloudfront.AccessLevel.READ]
+        }),
         compress: true,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
@@ -433,6 +437,7 @@ export class AwsJwtSts extends Construct {
     // Create API
     const api = new apigateway.LambdaRestApi(this, 'jwk-sts-api', {
       description: 'STS Token API Gateway',
+      restApiName: `jwk-sts-api-${cdk.Stack.of(this).stackName}`,
       handler: sign,
       defaultMethodOptions: {
         authorizationType: apigateway.AuthorizationType.IAM
