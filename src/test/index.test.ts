@@ -146,14 +146,23 @@ test('creates sts construct with all custom key names', () => {
 
 test('creates sts construct with custom certificates', () => {
   const stack = new cdk.Stack()
-  // Mock ICertificate
-  const cert = { certificateArn: 'arn:aws:acm:us-east-1:account:certificate/123' } as any
+  // Mock import existing certificates using CDK's proper method
+  const oidcCert = cdk.aws_certificatemanager.Certificate.fromCertificateArn(
+    stack,
+    'ImportedOidcCert',
+    'arn:aws:acm:us-east-1:account:certificate/oidc-123'
+  )
+  const tokenCert = cdk.aws_certificatemanager.Certificate.fromCertificateArn(
+    stack,
+    'ImportedTokenCert',
+    'arn:aws:acm:us-east-1:account:certificate/token-123'
+  )
   new AwsJwtSts(stack, 'WithCerts', {
     defaultAudience: 'api://default-aud',
     hostedZoneId: 'zone-id',
     hostedZoneName: 'zone.name',
-    oidcCertificate: cert,
-    tokenCertificate: cert
+    oidcCertificate: oidcCert,
+    tokenCertificate: tokenCert
   })
   const template = Template.fromStack(stack)
   template.resourceCountIs('AWS::CertificateManager::Certificate', 0)

@@ -11,7 +11,7 @@ import base64url from 'base64url'
 const KEY_ALIAS_CURRENT = process.env.CURRENT_KEY!.toString()
 const logger = new Logger()
 
-export const handler = async (apiEvent: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
+export const handler = async (apiEvent: APIGatewayEvent, _context: Context): Promise<APIGatewayProxyResult> => {
   const identityArn = getARNFromIdentity(apiEvent.requestContext.identity?.userArn)
   logger.debug(identityArn!)
 

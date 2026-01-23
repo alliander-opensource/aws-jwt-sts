@@ -15,7 +15,9 @@
     ".jsii"
   ],
   "types": "dist/index.d.ts",
-  "keywords": ["awscdk"],
+  "keywords": [
+    "awscdk"
+  ],
   "jsii": {
     "tsc": {
       "rootDir": "src",
@@ -38,47 +40,45 @@
     "watch": "tsc -w",
     "test": "npx jest --coverage",
     "cdk": "cdk",
-    "lint": "eslint . --ext .ts"
+    "lint": "npx oxlint ."
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.150",
+    "@types/aws-lambda": "^8.10.160",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.0.4",
-    "@typescript-eslint/eslint-plugin": "^8.35.0",
-    "@typescript-eslint/parser": "^8.35.0",
-    "aws-cdk-lib": "2.202.0",
-    "constructs": "10.4.2",
-    "aws-cdk": "^2.1019.2",
+    "@types/node": "^25.0.10",
+    "aws-cdk": "^2.1102.0",
+    "aws-cdk-lib": "2.235.1",
     "aws-sdk-client-mock": "^4.1.0",
-    "esbuild": "^0.25.5",
-    "eslint": "^9.29.0",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jest": "^29.0.1",
-    "eslint-plugin-n": "^17.20.0",
-    "eslint-plugin-promise": "^7.2.1",
-    "glob": "^9.3.5",
-    "jest": "^30.0.3",
-    "jsii": "^5.8.12",
+    "constructs": "10.4.5",
+    "esbuild": "^0.27.2",
+    "jest": "^30.2.0",
+    "jsii": "^5.9.23",
     "jwt-decode": "^4.0.0",
-    "prettier": "^3.6.2",
-    "ts-jest": "^29.4.0",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "~5.8.3"
+    "typescript": "~5.9.3",
+    "oxlint": "^1.41.0"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.202.0",
     "constructs": "^10.4.2"
   },
   "dependencies": {
-    "@aws-lambda-powertools/logger": "^2.22.0",
-    "@aws-sdk/client-kms": "^3.838.0",
-    "@aws-sdk/client-s3": "^3.837.0",
-    "@types/aws-lambda": "^8.10.150",
+    "@aws-lambda-powertools/logger": "^2.30.2",
+    "@aws-sdk/client-kms": "^3.974.0",
+    "@aws-sdk/client-s3": "^3.974.0",
+    "@types/aws-lambda": "^8.10.160",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
     "jsrsasign": "^11.1.0"
   },
-  "bundledDependencies":[
+  "overrides": {
+    "glob@7.2.3": "9.3.5",
+    "jest": "$jest",
+    "brace-expansion@1.1.11": "1.1.12",
+    "diff": "8.0.3"
+  },
+  "bundleDependencies": [
     "@aws-lambda-powertools/logger",
     "@aws-sdk/client-kms",
     "@aws-sdk/client-s3",
@@ -86,12 +86,5 @@
     "@types/jsrsasign",
     "base64url",
     "jsrsasign"
-  ],
-  "overrides": {
-    "glob": "$glob",
-    "jest": "$jest",
-    "brace-expansion@1.1.11": "1.1.12",
-    "brace-expansion@2.0.1": "2.0.2",
-    "sinon": "21.0.0"
-  }
+  ]
 }
