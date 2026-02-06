@@ -144,7 +144,7 @@ export interface AwsJwtStsProps {
 
   /**
    * Optional custom name for the API Gateway
-   * 
+   *
    * @default 'jwk-sts-api'
    */
   readonly jwkApiName?: string;
