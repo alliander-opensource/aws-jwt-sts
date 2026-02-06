@@ -18,6 +18,6 @@ jobs:
       - name: "install dependencies"
         run: npm install
       - name: "run oxlint"
-        run: oxlint .
+        run: npx oxlint .
       - name: "run unit tests"
         run: npm run test
