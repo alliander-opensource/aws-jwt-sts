@@ -141,6 +141,13 @@ export interface AwsJwtStsProps {
    * This certificate is used for the token api and should be in the same region as the API Gateway
    */
   readonly tokenCertificate?: ICertificate;
+
+  /**
+   * Optional custom name for the API Gateway
+   * 
+   * @default 'jwk-sts-api'
+   */
+  readonly jwkApiName?: string;
 }
 
 export class AwsJwtSts extends Construct {
@@ -161,6 +168,7 @@ export class AwsJwtSts extends Construct {
     const oidcSubdomain = props.oidcSubdomain ? props.oidcSubdomain : 'oidc'
     const tokenSubdomain = props.tokenSubdomain ? props.tokenSubdomain : 'token'
     const architecture = props.architecture ? props.architecture : lambda.Architecture.X86_64
+    const jwkApiName = props.jwkApiName ? props.jwkApiName : 'jwk-sts-api'
     let oidcDomainName = ''
     let tokenDomainName = ''
 
@@ -437,7 +445,7 @@ export class AwsJwtSts extends Construct {
     // Create API
     const api = new apigateway.LambdaRestApi(this, 'jwk-sts-api', {
       description: 'STS Token API Gateway',
-      restApiName: `jwk-sts-api-${cdk.Stack.of(this).stackName}`,
+      restApiName: jwkApiName,
       handler: sign,
       defaultMethodOptions: {
         authorizationType: apigateway.AuthorizationType.IAM
