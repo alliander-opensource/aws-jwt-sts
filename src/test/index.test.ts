@@ -204,3 +204,28 @@ test('can create the lambdas with a different architecture', () => {
     Architectures: [cdk.aws_lambda.Architecture.ARM_64.toString()]
   }))
 })
+
+test('creates sts construct with custom api name', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithCustomApiName', {
+    defaultAudience: 'api://default-aud',
+    jwkApiName: 'custom-api-name'
+  })
+
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::ApiGateway::RestApi', Match.objectLike({
+    Name: 'custom-api-name'
+  }))
+})
+
+test('creates sts construct with default api name', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'WithDefaultApiName', {
+    defaultAudience: 'api://default-aud'
+  })
+
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::ApiGateway::RestApi', Match.objectLike({
+    Name: 'jwk-sts-api'
+  }))
+})
