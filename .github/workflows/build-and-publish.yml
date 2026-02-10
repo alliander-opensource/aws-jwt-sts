@@ -5,6 +5,10 @@ on:
     tags:
       - '*'
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
@@ -23,5 +27,3 @@ jobs:
         run: npm run build
       - name: publish npm package
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM}}
