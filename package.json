@@ -28,7 +28,7 @@
     "targets": {
       "python": {
         "distName": "alliander-opensource-aws-jwt-sts",
-        "module": "alliander-opensource.aws-jwt-sts"
+        "module": "alliander_opensource.aws_jwt_sts"
       }
     }
   },
