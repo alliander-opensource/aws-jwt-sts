@@ -66,7 +66,7 @@
   "dependencies": {
     "@aws-lambda-powertools/logger": "^2.30.2",
     "@aws-sdk/client-kms": "^3.974.0",
-    "@aws-sdk/client-s3": "^3.974.0",
+    "@aws-sdk/client-s3": "^3.986.0",
     "@types/aws-lambda": "^8.10.160",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
