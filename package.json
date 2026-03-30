@@ -70,7 +70,7 @@
     "@types/aws-lambda": "^8.10.160",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
-    "jsrsasign": "^11.1.0"
+    "jsrsasign": "^11.1.1"
   },
   "overrides": {
     "glob@7.2.3": "9.3.5",
