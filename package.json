@@ -43,40 +43,39 @@
     "lint": "npx oxlint ."
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.160",
+    "@types/aws-lambda": "^8.10.161",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.2.1",
-    "aws-cdk": "^2.1105.0",
-    "aws-cdk-lib": "2.237.1",
+    "@types/node": "^25.6.0",
+    "aws-cdk": "^2.1120.0",
+    "aws-cdk-lib": "2.252.0",
     "aws-sdk-client-mock": "^4.1.0",
-    "constructs": "10.4.5",
-    "esbuild": "^0.27.2",
-    "jest": "^30.2.0",
-    "jsii": "^5.9.25",
+    "constructs": "10.6.0",
+    "esbuild": "^0.28.0",
+    "jest": "^30.3.0",
+    "jsii": "^5.9.37",
     "jwt-decode": "^4.0.0",
-    "ts-jest": "^29.4.6",
+    "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.3",
-    "oxlint": "^1.43.0"
+    "oxlint": "^1.62.0"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "2.237.1",
-    "constructs": "10.4.5"
+    "aws-cdk-lib": "2.252.0",
+    "constructs": "^10.5.0"
   },
   "dependencies": {
-    "@aws-lambda-powertools/logger": "^2.30.2",
-    "@aws-sdk/client-kms": "^3.984.0",
-    "@aws-sdk/client-s3": "^3.984.0",
-    "@types/aws-lambda": "^8.10.160",
+    "@aws-lambda-powertools/logger": "^2.33.0",
+    "@aws-sdk/client-kms": "^3.1040.0",
+    "@aws-sdk/client-s3": "^3.1040.0",
+    "@types/aws-lambda": "^8.10.161",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
-    "jsrsasign": "^11.1.0"
+    "jsrsasign": "^11.1.3"
   },
   "overrides": {
-    "glob@7.2.3": "9.3.5",
     "jest": "$jest",
-    "brace-expansion@1.1.11": "1.1.12",
-    "diff": "8.0.3"
+    "diff": "8.0.3",
+    "brace-expansion@<1.1.13": "1.1.13"
   },
   "bundleDependencies": [
     "@aws-lambda-powertools/logger",

@@ -2,6 +2,23 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import { aws_lambda as lambda } from 'aws-cdk-lib'
+
+// Mock NodejsFunction to skip esbuild bundling — makes tests ~10x faster
+jest.mock('aws-cdk-lib/aws-lambda-nodejs', () => {
+  return {
+    NodejsFunction: class MockNodejsFunction extends lambda.Function {
+      constructor(scope: any, id: string, props: any) {
+        super(scope, id, {
+          ...props,
+          code: lambda.Code.fromInline('// mocked'),
+          handler: 'index.handler',
+          runtime: props?.runtime ?? lambda.Runtime.NODEJS_22_X,
+        })
+      }
+    }
+  }
+})
 
 import * as cdk from 'aws-cdk-lib'
 import { Match, Template } from 'aws-cdk-lib/assertions'
