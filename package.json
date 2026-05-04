@@ -1,7 +1,7 @@
 {
   "name": "@alliander-opensource/aws-jwt-sts",
   "license": "MIT",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "author": {
     "name": "Alliander NV"
   },
@@ -61,7 +61,7 @@
   },
   "peerDependencies": {
     "aws-cdk-lib": "2.252.0",
-    "constructs": "^10.5.0"
+    "constructs": "^10.6.0"
   },
   "dependencies": {
     "@aws-lambda-powertools/logger": "^2.33.0",
