@@ -10,6 +10,7 @@ import {
 } from '@aws-sdk/client-kms'
 import { APIGatewayProxyEvent, Context } from 'aws-lambda'
 import { mockClient } from 'aws-sdk-client-mock'
+import 'aws-sdk-client-mock-jest'
 import { jwtDecode as jwt_decode } from 'jwt-decode'
 
 process.env.CURRENT_KEY = 'key-1'// Set env var as it is called on load of the file
@@ -111,6 +112,9 @@ describe('handlers/sign/sign.ts', () => {
 
     expect(response.statusCode).toEqual(500)
     expect(response.body).toEqual('KMS key is not correctly tagged')
+    expect(kmsMock).toHaveReceivedCommandWith(DescribeKeyCommand, { KeyId: 'key-1' })
+    expect(kmsMock).toHaveReceivedCommandWith(ListResourceTagsCommand, { KeyId: 'key-1' })
+    expect(kmsMock).not.toHaveReceivedCommand(SignCommand)
   })
 
   test('it should respond internal server error if the KeyId is not in the metadata', async () => {
@@ -121,6 +125,9 @@ describe('handlers/sign/sign.ts', () => {
 
     expect(response.statusCode).toEqual(500)
     expect(response.body).toEqual('KMS key could not be retrieved')
+    expect(kmsMock).toHaveReceivedCommandWith(DescribeKeyCommand, { KeyId: 'key-1' })
+    expect(kmsMock).not.toHaveReceivedCommand(ListResourceTagsCommand)
+    expect(kmsMock).not.toHaveReceivedCommand(SignCommand)
   })
 
   test('should sign correctly', async () => {
@@ -173,6 +180,16 @@ describe('handlers/sign/sign.ts', () => {
 
     const tokenParts = responseBody.token.split('.')
     expect(tokenParts[2]).toEqual(`${b64Signature.replace('==', '')}`)
+
+    // Verify KMS was called with correct parameters
+    expect(kmsMock).toHaveReceivedCommandWith(DescribeKeyCommand, { KeyId: 'key-1' })
+    expect(kmsMock).toHaveReceivedCommandWith(ListResourceTagsCommand, { KeyId: 'key-1' })
+    expect(kmsMock).toHaveReceivedCommandWith(SignCommand, {
+      KeyId: 'key-1',
+      SigningAlgorithm: 'RSASSA_PKCS1_V1_5_SHA_256',
+      MessageType: 'RAW',
+      Message: expect.any(Buffer)
+    })
   })
 })
 
@@ -209,6 +226,15 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
 
     const decodedToken: any = jwt_decode(token)
     expect(decodedToken.aud).toBe('custom-aud')
+
+    expect(kmsMock).toHaveReceivedCommandTimes(DescribeKeyCommand, 1)
+    expect(kmsMock).toHaveReceivedCommandTimes(ListResourceTagsCommand, 1)
+    expect(kmsMock).toHaveReceivedCommandWith(SignCommand, {
+      KeyId: 'key-1',
+      SigningAlgorithm: 'RSASSA_PKCS1_V1_5_SHA_256',
+      MessageType: 'RAW',
+      Message: expect.any(Buffer)
+    })
   })
 
   test('should handle missing queryStringParameters', async () => {
@@ -267,6 +293,7 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
     const response = await handler(event, CONTEXT)
     expect(response.statusCode).toBe(500)
     expect(response.body).toEqual('KMS key is not correctly tagged')
+    expect(kmsMock).not.toHaveReceivedCommand(SignCommand)
   })
 
   test('should handle missing KeyId in DescribeKeyCommand', async () => {
@@ -277,6 +304,8 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
     const response = await handler(event, CONTEXT)
     expect(response.statusCode).toBe(500)
     expect(response.body).toEqual('KMS key could not be retrieved')
+    expect(kmsMock).toHaveReceivedCommandTimes(DescribeKeyCommand, 1)
+    expect(kmsMock).not.toHaveReceivedCommand(ListResourceTagsCommand)
   })
 
   test('should handle missing userArn', async () => {
@@ -286,6 +315,7 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
     const response = await handler(event, CONTEXT)
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual('Unable to resolve identity')
+    expect(kmsMock).not.toHaveReceivedCommand(DescribeKeyCommand)
   })
 
   test('should handle completely invalid arn', async () => {
@@ -295,6 +325,7 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
     const response = await handler(event, CONTEXT)
     expect(response.statusCode).toBe(400)
     expect(response.body).toEqual('Unable to resolve identity')
+    expect(kmsMock).not.toHaveReceivedCommand(DescribeKeyCommand)
   })
 
   test('should handle error when ListResourceTagsCommand returns undefined', async () => {
@@ -308,6 +339,7 @@ describe('handlers/sign/sign.ts - additional coverage', () => {
     const response = await handler(event, CONTEXT)
     expect(response.statusCode).toBe(500)
     expect(response.body).toEqual('KMS key is not correctly tagged')
+    expect(kmsMock).not.toHaveReceivedCommand(SignCommand)
   })
 })
 
