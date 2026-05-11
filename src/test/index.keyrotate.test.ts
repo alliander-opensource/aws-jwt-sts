@@ -2,7 +2,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-import { DescribeKeyCommand, GetPublicKeyCommand, KMSClient } from '@aws-sdk/client-kms'
+import {
+  CreateAliasCommand,
+  CreateKeyCommand,
+  DescribeKeyCommand,
+  GetPublicKeyCommand,
+  KMSClient,
+  NotFoundException,
+  ScheduleKeyDeletionCommand,
+  UpdateAliasCommand
+} from '@aws-sdk/client-kms'
 import { S3Client } from '@aws-sdk/client-s3'
 import { mockClient } from 'aws-sdk-client-mock'
 
@@ -161,6 +170,189 @@ describe('handlers/keyrotate/keyrotate.test.ts', () => {
         'sub'
       ]
     })
+  })
+
+  // --- deletePrevious step ---
+
+  test('deletePrevious should schedule key deletion when PREVIOUS alias exists', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/PREVIOUS' })
+      .resolves({ KeyMetadata: { KeyId: 'key-prev-123' } })
+
+    await handler({ step: 'deletePrevious' })
+
+    const deleteCalls = kmsMock.commandCalls(ScheduleKeyDeletionCommand)
+    expect(deleteCalls).toHaveLength(1)
+    expect(deleteCalls[0].args[0].input.KeyId).toBe('key-prev-123')
+  })
+
+  test('deletePrevious should skip deletion when PREVIOUS alias does not exist', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/PREVIOUS' })
+      .rejects(new NotFoundException({ message: 'not found', $metadata: {} }))
+
+    await handler({ step: 'deletePrevious' })
+
+    const deleteCalls = kmsMock.commandCalls(ScheduleKeyDeletionCommand)
+    expect(deleteCalls).toHaveLength(0)
+  })
+
+  test('deletePrevious should rethrow non-NotFoundException errors', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/PREVIOUS' })
+      .rejects(new Error('AccessDenied'))
+
+    await expect(handler({ step: 'deletePrevious' })).rejects.toThrow('AccessDenied')
+  })
+
+  // --- movePrevious step ---
+
+  test('movePrevious should update PREVIOUS alias to point to CURRENT key', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/CURRENT' })
+      .resolves({ KeyMetadata: { KeyId: 'key-current-456' } })
+
+    await handler({ step: 'movePrevious' })
+
+    const updateCalls = kmsMock.commandCalls(UpdateAliasCommand)
+    expect(updateCalls).toHaveLength(1)
+    expect(updateCalls[0].args[0].input.AliasName).toBe('alias/sts/PREVIOUS')
+    expect(updateCalls[0].args[0].input.TargetKeyId).toBe('key-current-456')
+  })
+
+  test('movePrevious should skip when CURRENT alias does not exist', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/CURRENT' })
+      .rejects(new NotFoundException({ message: 'not found', $metadata: {} }))
+
+    await handler({ step: 'movePrevious' })
+
+    const updateCalls = kmsMock.commandCalls(UpdateAliasCommand)
+    const createCalls = kmsMock.commandCalls(CreateAliasCommand)
+    expect(updateCalls).toHaveLength(0)
+    expect(createCalls).toHaveLength(0)
+  })
+
+  test('movePrevious should create alias when UpdateAlias throws NotFoundException', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/CURRENT' })
+      .resolves({ KeyMetadata: { KeyId: 'key-current-456' } })
+      .on(UpdateAliasCommand)
+      .rejects(new NotFoundException({ message: 'alias not found', $metadata: {} }))
+
+    await handler({ step: 'movePrevious' })
+
+    const createCalls = kmsMock.commandCalls(CreateAliasCommand)
+    expect(createCalls).toHaveLength(1)
+    expect(createCalls[0].args[0].input.AliasName).toBe('alias/sts/PREVIOUS')
+    expect(createCalls[0].args[0].input.TargetKeyId).toBe('key-current-456')
+  })
+
+  test('movePrevious should rethrow non-NotFoundException from UpdateAlias', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/CURRENT' })
+      .resolves({ KeyMetadata: { KeyId: 'key-current-456' } })
+      .on(UpdateAliasCommand)
+      .rejects(new Error('KMSInternalException'))
+
+    await expect(handler({ step: 'movePrevious' })).rejects.toThrow('KMSInternalException')
+  })
+
+  // --- moveCurrent step ---
+
+  test('moveCurrent should update CURRENT alias to point to PENDING key', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/PENDING' })
+      .resolves({ KeyMetadata: { KeyId: 'key-pending-789' } })
+
+    await handler({ step: 'moveCurrent' })
+
+    const updateCalls = kmsMock.commandCalls(UpdateAliasCommand)
+    expect(updateCalls).toHaveLength(1)
+    expect(updateCalls[0].args[0].input.AliasName).toBe('alias/sts/CURRENT')
+    expect(updateCalls[0].args[0].input.TargetKeyId).toBe('key-pending-789')
+  })
+
+  test('moveCurrent should skip when PENDING alias does not exist', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/PENDING' })
+      .rejects(new NotFoundException({ message: 'not found', $metadata: {} }))
+
+    await handler({ step: 'moveCurrent' })
+
+    const updateCalls = kmsMock.commandCalls(UpdateAliasCommand)
+    expect(updateCalls).toHaveLength(0)
+  })
+
+  // --- createPending step ---
+
+  test('createPending should create a new RSA key and assign PENDING alias', async () => {
+    kmsMock
+      .on(CreateKeyCommand)
+      .resolves({ KeyMetadata: { KeyId: 'new-key-abc' } })
+
+    await handler({ step: 'createPending' })
+
+    const createKeyCalls = kmsMock.commandCalls(CreateKeyCommand)
+    expect(createKeyCalls).toHaveLength(1)
+    expect(createKeyCalls[0].args[0].input.KeySpec).toBe('RSA_2048')
+    expect(createKeyCalls[0].args[0].input.KeyUsage).toBe('SIGN_VERIFY')
+
+    const updateCalls = kmsMock.commandCalls(UpdateAliasCommand)
+    expect(updateCalls).toHaveLength(1)
+    expect(updateCalls[0].args[0].input.AliasName).toBe('alias/sts/PENDING')
+    expect(updateCalls[0].args[0].input.TargetKeyId).toBe('new-key-abc')
+  })
+
+  test('createPending should create alias if PENDING alias does not exist yet', async () => {
+    kmsMock
+      .on(CreateKeyCommand)
+      .resolves({ KeyMetadata: { KeyId: 'new-key-abc' } })
+      .on(UpdateAliasCommand)
+      .rejects(new NotFoundException({ message: 'alias not found', $metadata: {} }))
+
+    await handler({ step: 'createPending' })
+
+    const createAliasCalls = kmsMock.commandCalls(CreateAliasCommand)
+    expect(createAliasCalls).toHaveLength(1)
+    expect(createAliasCalls[0].args[0].input.AliasName).toBe('alias/sts/PENDING')
+    expect(createAliasCalls[0].args[0].input.TargetKeyId).toBe('new-key-abc')
+  })
+
+  // --- invalid step ---
+
+  test('invalid step should not call any KMS commands', async () => {
+    await handler({ step: 'nonExistentStep' })
+
+    const describeCalls = kmsMock.commandCalls(DescribeKeyCommand)
+    const createKeyCalls = kmsMock.commandCalls(CreateKeyCommand)
+    expect(describeCalls).toHaveLength(0)
+    expect(createKeyCalls).toHaveLength(0)
+  })
+
+  // --- generateArtifacts with partial key availability ---
+
+  test('generateArtifacts should handle missing keys gracefully (only CURRENT exists)', async () => {
+    kmsMock
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/PREVIOUS' })
+      .rejects(new NotFoundException({ message: 'not found', $metadata: {} }))
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/CURRENT' })
+      .resolves({ KeyMetadata: { KeyId: 'key-2' } })
+      .on(DescribeKeyCommand, { KeyId: 'alias/sts/PENDING' })
+      .rejects(new NotFoundException({ message: 'not found', $metadata: {} }))
+      .on(GetPublicKeyCommand, { KeyId: 'alias/sts/CURRENT' })
+      .resolves({ PublicKey: base64ToArrayBuffer(pubKeys.CURRENT.pem) })
+
+    process.env.S3_BUCKET = 'test-bucket-name'
+    process.env.ISSUER = 'test-issuer.com'
+
+    await handler({ step: 'generateArtifacts' })
+
+    // Should only have 1 key in the JWKS
+    // @ts-ignore
+    const s3Body = JSON.parse(s3Mock.call(0).args[0].input.Body.toString())
+    expect(s3Body.keys).toHaveLength(1)
+    expect(s3Body.keys[0].kid).toBe(pubKeys.CURRENT.jwk_kid)
   })
 })
 
