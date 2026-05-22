@@ -1,7 +1,7 @@
 {
   "name": "@alliander-opensource/aws-jwt-sts",
   "license": "MIT",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "author": {
     "name": "Alliander NV"
   },
