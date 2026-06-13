@@ -51,7 +51,7 @@
     "aws-sdk-client-mock": "^4.1.0",
     "aws-sdk-client-mock-jest": "^4.1.0",
     "constructs": "10.6.0",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "jest": "^30.4.2",
     "jsii": "^5.9.41",
     "jwt-decode": "^4.0.0",
