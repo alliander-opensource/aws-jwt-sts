@@ -1,23 +1,80 @@
 name: PR
+
 on:
   workflow_dispatch:
   pull_request:
 
+# Least privilege. This workflow only reads the repository; the Artifactory
+# token (when present) arrives as a secret, not via the GITHUB_TOKEN.
+permissions:
+  contents: read
+
 jobs:
+  # NOTE: this job name is referenced by the branch protection rule on `main`
+  # as a required status check. Renaming or splitting it will leave pull
+  # requests waiting forever on a check that never reports -- update the branch
+  # protection rule first if you restructure this.
   pre-commit:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-      - name: set PY
-        run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
-      - name: "install pre-commit"
-        run: pip3 install pre-commit
-      - name: "run pre-commit"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: install pre-commit
+        run: 'pip3 install --only-binary :all: pre-commit==4.6.2'
+
+      - name: run pre-commit
         run: pre-commit run --all-files -c .pre-commit-config-ci.yaml
-      - name: "install dependencies"
-        run: npm install
-      - name: "run oxlint"
-        run: npx oxlint .
-      - name: "run unit tests"
-        run: npm run test
+
+      # Must run BEFORE pnpm/action-setup. That action's self-installer fetches
+      # @pnpm/exe from the npm registry, so the registry has to be selected and
+      # authenticated before it runs.
+      - name: select npm registry
+        env:
+          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${ARTIFACTORY_TOKEN:-}" ]; then
+            registry='https://alliander.jfrog.io/artifactory/api/npm/alliander-npm-all/'
+            echo 'Installing through the Alliander Artifactory npm mirror.'
+            umask 077
+            {
+              echo "registry=${registry}"
+              # Token is referenced from the environment, never written to disk.
+              echo "${registry#https:}:_authToken=\${NODE_AUTH_TOKEN}"
+              echo 'always-auth=true'
+            } > ~/.npmrc
+            echo "NODE_AUTH_TOKEN=${ARTIFACTORY_TOKEN}" >> "$GITHUB_ENV"
+          else
+            registry='https://registry.npmjs.org/'
+            echo 'No ARTIFACTORY_TOKEN available (always the case for pull requests'
+            echo 'from forks): falling back to the public npm registry.'
+            echo "registry=${registry}" > ~/.npmrc
+          fi
+          echo "npm_config_registry=${registry}" >> "$GITHUB_ENV"
+
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+
+      # node 24, not 26: jsii supports ^20/^22/^24 and warns that anything
+      # newer is untested. The compiler is the constraint here, not the runtime.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: run oxlint
+        run: pnpm run lint
+
+      - name: run unit tests
+        run: pnpm run test
+
+      # Compiles with tsc and then jsii, so a change that breaks the published
+      # construct surface fails the PR rather than the release.
+      - name: compile typescript
+        run: pnpm run build
