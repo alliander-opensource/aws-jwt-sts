@@ -13,7 +13,7 @@ jest.mock('aws-cdk-lib/aws-lambda-nodejs', () => {
           ...props,
           code: lambda.Code.fromInline('// mocked'),
           handler: 'index.handler',
-          runtime: props?.runtime ?? lambda.Runtime.NODEJS_22_X,
+          runtime: props?.runtime ?? lambda.Runtime.NODEJS_24_X,
         })
       }
     }
@@ -33,8 +33,23 @@ test('creates sts construct correctly', () => {
   })
 
   const template = Template.fromStack(stack)
+
+  // Matched on an environment variable unique to each of our two handlers, not
+  // on Runtime alone. The template also contains aws-cdk-lib's own
+  // S3 auto-delete-objects custom resource handler, whose runtime aws-cdk-lib
+  // controls -- a bare `Runtime` match is satisfied by that one and would pass
+  // even if our functions were on a different version.
   template.hasResourceProperties('AWS::Lambda::Function', Match.objectLike({
-    Runtime: 'nodejs22.x'
+    Runtime: 'nodejs24.x',
+    Environment: {
+      Variables: Match.objectLike({ PENDING_KEY: Match.anyValue() })
+    }
+  }))
+  template.hasResourceProperties('AWS::Lambda::Function', Match.objectLike({
+    Runtime: 'nodejs24.x',
+    Environment: {
+      Variables: Match.objectLike({ DEFAULT_AUDIENCE: Match.anyValue() })
+    }
   }))
 
   template.hasResourceProperties('AWS::Events::Rule', Match.objectLike(

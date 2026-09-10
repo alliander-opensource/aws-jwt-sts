@@ -52,7 +52,7 @@ updates:
       - dependency-name: typescript
         update-types:
           - version-update:semver-major
-      # Bounded by the Lambda runtime (NODEJS_22_X); 26 adds node:quic/ffi/vfs.
+      # Bounded by the Lambda runtime (NODEJS_24_X); 26 adds node:quic/ffi/vfs.
       - dependency-name: '@types/node'
         update-types:
           - version-update:semver-major
