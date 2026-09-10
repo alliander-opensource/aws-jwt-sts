@@ -248,7 +248,7 @@ export class AwsJwtSts extends Construct {
     })
     const rotateKeys = new lambdaNodejs.NodejsFunction(this, 'keyrotate', {
       timeout: cdk.Duration.seconds(5),
-      runtime: lambda.Runtime.NODEJS_22_X,
+      runtime: lambda.Runtime.NODEJS_24_X,
       role: rotateKeysRole,
       architecture,
       environment: {
@@ -266,7 +266,7 @@ export class AwsJwtSts extends Construct {
     })
     const sign = new lambdaNodejs.NodejsFunction(this, 'sign', {
       timeout: cdk.Duration.seconds(5),
-      runtime: lambda.Runtime.NODEJS_22_X,
+      runtime: lambda.Runtime.NODEJS_24_X,
       role: signRole,
       architecture,
       environment: {

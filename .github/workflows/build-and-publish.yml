@@ -6,24 +6,54 @@ on:
       - '*'
 
 permissions:
-  id-token: write  # Required for OIDC
   contents: read
 
 jobs:
   build-and-publish:
+    # Must be GitHub-hosted, not self-hosted. This job holds `id-token: write`
+    # for npm trusted publishing, so it must not share a runner pool with the
+    # pull request workflow -- on a public repository that pool is also running
+    # fork-supplied code, and anything left behind in $HOME, the tool cache or
+    # on PATH would be reachable from here. Nothing here needs internal network
+    # access. Same organisation-level runner prerequisite as pr.yml.
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing (OIDC) -- no NPM_TOKEN needed
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Dependencies install from the default registry, registry.npmjs.org --
+      # the same one the PR workflow uses, so the release builds from the tree
+      # that CI validated. No registry credential is configured; publishing
+      # authenticates over OIDC instead (see the publish step).
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+
+      # node 24, not 26: jsii supports ^22/^24 (and ^20, deprecated) only.
+      # Same version as the PR workflow -- releases must build on what CI built.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
-          scope: "@alliander-opensource"
-          registry-url: 'https://registry.npmjs.org'
+          cache: pnpm
+
       - name: install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
+
+      - name: run oxlint
+        run: pnpm run lint
+
       - name: run tests
-        run: npm run test
+        run: pnpm run test
+
       - name: compile typescript
-        run: npm run build
+        run: pnpm run build
+
       - name: publish npm package
-        run: npm publish --access public
+        # No token anywhere: with no credential configured for the target
+        # registry, pnpm negotiates npm trusted publishing over OIDC using the
+        # `id-token: write` permission above.
+        #
+        # --no-git-checks: the release runs from a tag, so pnpm's default
+        # "must be on the publish branch" check does not apply.
+        # Registry and public access come from publishConfig in package.json.
+        run: pnpm publish --no-git-checks

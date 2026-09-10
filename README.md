@@ -25,17 +25,15 @@ On time based events, EventBridge will trigger a Step function rotation flow. Th
 
 1. Init a new typescript CDK project
     `cdk init app --language typescript`
-2. Config npm to retrieve packages from github package repository
-    `echo @alliander-opensource:registry=https://npm.pkg.github.com > .npmrc`
-3. Install the aws-jwt-sts construct
+2. Install the aws-jwt-sts construct. It is published to the public npm registry, so no extra registry configuration is required.
     `npm install @alliander-opensource/aws-jwt-sts`
-4. Edit lib/my-sts-stack.ts to add the construct to the stack
+3. Edit lib/my-sts-stack.ts to add the construct to the stack
     See the comments in the code for possible options
 
 ```ts
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { AwsJwtSts, wafUsage } from '@alliander-opensource/aws-jwt-sts'
+import { AwsJwtSts, WafUsage } from '@alliander-opensource/aws-jwt-sts'
 
 export class MyStsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -69,16 +67,16 @@ export class MyStsStack extends cdk.Stack {
       * Optional:
       *
       * AWS WAF can be applied to the API GW
-      * apiGwWaf acceptes the folling values:
-      * wafUsage.ConstructProvided to use the WAF defined by the contruct
-      * wafUsage.ProvideWebAclArn in combination with the apiGwWafWebAclArn param to specify an already deployed webAcl
+      * apiGwWaf accepts the following values:
+      * WafUsage.CONSTRUCT_PROVIDED to use the WAF defined by the construct
+      * WafUsage.PROVIDE_WEB_ACL_ARN in combination with the apiGwWafWebAclArn param to specify an already deployed webAcl
       *
       * By not setting apiGwWaf, no WAF will be deployed
       */
-      apiGwWaf: wafUsage.ProvideWebAclArn,
+      apiGwWaf: WafUsage.PROVIDE_WEB_ACL_ARN,
 
       /*
-      * Optional; only applicable if apiGwWaf is set to: wafUsage.ProvideWebAclArn
+      * Optional; only applicable if apiGwWaf is set to: WafUsage.PROVIDE_WEB_ACL_ARN
       *
       * Specify the WebAcl to use for the API GW
       */
@@ -98,7 +96,7 @@ export class MyStsStack extends cdk.Stack {
 }
 ```
 
-5. Deploy the stack
+4. Deploy the stack
    `cdk deploy`
 
 The stack outputs the urls of the endpoints. So if no custom domain is provided observe the CDK Stack output.
@@ -134,3 +132,7 @@ role.addToPolicy(new iam.PolicyStatement({
 5. Invoke the api
     `awscurl {your_token_endpoint}/token --service execute-api --region {your_region} | jq -r .token | jwt decode –`
 6. Observe the JWT
+
+## Contributing
+
+Development setup, the supported Node.js versions, registry configuration and the reasoning behind the pinned dependency ranges are documented in [CONTRIBUTING.md](CONTRIBUTING.md).

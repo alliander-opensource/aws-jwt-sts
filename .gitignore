@@ -12,5 +12,14 @@ cdk.out
 dist
 coverage
 
-# Allow eslint 9.x.x config
-!eslint.config.js
+# jsii-pacmak language bindings output ("outdir" in the jsii config).
+# Note the trailing slash: the .jsii manifest itself IS committed and is
+# shipped via package.json "files" so Construct Hub can index the package.
+jsii/
+
+# pnpm. pnpm-lock.yaml is intentionally NOT ignored -- it is committed and CI
+# installs with --frozen-lockfile.
+.pnpm-store/
+
+# Local `pnpm pack` / `npm pack` output.
+*.tgz

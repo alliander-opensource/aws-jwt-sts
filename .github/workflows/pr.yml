@@ -1,23 +1,55 @@
 name: PR
+
 on:
   workflow_dispatch:
   pull_request:
 
+# Least privilege. This workflow only reads the repository: it needs no write
+# scope and no id-token, and it is never given a registry credential.
+permissions:
+  contents: read
+
 jobs:
+  # NOTE: this job name is referenced by the branch protection rule on `main`
+  # as a required status check. Renaming or splitting it will leave pull
+  # requests waiting forever on a check that never reports -- update the branch
+  # protection rule first if you restructure this.
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-      - name: set PY
-        run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
-      - name: "install pre-commit"
-        run: pip3 install pre-commit
-      - name: "run pre-commit"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+
+      - name: install pre-commit
+        run: 'pip3 install --only-binary :all: pre-commit==4.6.2'
+
+      - name: run pre-commit
         run: pre-commit run --all-files -c .pre-commit-config-ci.yaml
-      - name: "install dependencies"
-        run: npm install
-      - name: "run oxlint"
-        run: npx oxlint .
-      - name: "run unit tests"
-        run: npm run test
+
+      - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
+
+      # node 24, not 26: jsii warns that anything newer is untested. The
+      # compiler is the constraint here, not the runtime. jsii also accepts ^22,
+      # and ^20 but only as [DEPRECATED] -- 20 leaves jsii's support window on
+      # 2026-10-30, so 22 is the real floor. Keep in sync with CONTRIBUTING.md.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: run oxlint
+        run: pnpm run lint
+
+      - name: run unit tests
+        run: pnpm run test
+
+      # Compiles with tsc and then jsii, so a change that breaks the published
+      # construct surface fails the PR rather than the release.
+      - name: compile typescript
+        run: pnpm run build
