@@ -15,18 +15,6 @@ jobs:
   # requests waiting forever on a check that never reports -- update the branch
   # protection rule first if you restructure this.
   pre-commit:
-    # Must be GitHub-hosted, not self-hosted. This is a PUBLIC repository with a
-    # `pull_request` trigger, so a fork can run its own code in this job just by
-    # opening a pull request -- including the files that configure the install
-    # (pnpm-workspace.yaml, and therefore `allowBuilds`). That has to happen on
-    # an ephemeral runner outside Alliander infrastructure. Nothing in this job
-    # needs internal network access, so there is no cost to it.
-    #
-    # PREREQUISITE: GitHub-hosted runners must be enabled for this repository at
-    # the organisation level. Until they are, this job stays queued and the
-    # required `pre-commit` status check never reports -- which looks identical
-    # to a hung build. If you are here because the check is not running, that is
-    # the first thing to check; it is not a problem with the workflow.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -41,16 +29,6 @@ jobs:
       - name: run pre-commit
         run: pre-commit run --all-files -c .pre-commit-config-ci.yaml
 
-      # No registry is configured here, so pnpm uses its default,
-      # registry.npmjs.org. CI deliberately does NOT authenticate against the
-      # Alliander Artifactory mirror: fork pull requests can never receive a
-      # secret, so the public registry is the only path that works for every
-      # contributor, and a long-lived token on a public repository would be
-      # exposed to whatever runs in this job. The mirror is for local
-      # development, configured per machine -- see CONTRIBUTING.md.
-      #
-      # `minimumReleaseAge` in pnpm-workspace.yaml is what covers the loss of
-      # the mirror's server-side cooldown on this path.
       - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
 
       # node 24, not 26: jsii warns that anything newer is untested. The
