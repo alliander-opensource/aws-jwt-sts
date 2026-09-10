@@ -37,11 +37,10 @@ allowBuilds:
 # package versions are caught and yanked within hours, so a cooldown filters out
 # the smash-and-grab compromises.
 #
-# This is a BACKSTOP, not the primary control. Installs normally go through the
-# Artifactory mirror, which already applies its own (~7 day) cooldown server
-# side. This setting is what protects the fallback path in .github/workflows,
-# where a fork PR resolves straight from registry.npmjs.org and gets no mirror
-# cooldown at all.
+# This is the PRIMARY control on the public-registry path, which is what both
+# workflows in .github/workflows use and what every external contributor uses.
+# Alliander developers installing through the Artifactory mirror get its own
+# (~7 day) server-side cooldown on top of this; nobody gets less than 3 days.
 #
 # 3 days rather than 7: pnpm re-validates the committed lockfile against this
 # policy on EVERY install, so a window wider than the age of the versions we
@@ -49,6 +48,11 @@ allowBuilds:
 # a genuinely urgent upgrade is younger than this, add that exact version to
 # minimumReleaseAgeExclude rather than lowering the window for everything.
 # (pnpm 11 already defaults this to 1440; this widens it.)
+#
+# Setting this explicitly auto-enables minimumReleaseAgeStrict, so in CI (no
+# TTY) an immature version FAILS the install rather than being skipped. The
+# `cooldown` in .github/dependabot.yml must stay >= this window so bot pull
+# requests do not open inside it -- raise both together, or neither.
 minimumReleaseAge: 4320 # 3 days
 
 # Already pnpm's default. Pinned so that a machine-wide or user-level

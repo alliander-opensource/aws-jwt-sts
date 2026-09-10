@@ -1,0 +1,58 @@
+---
+# Dependabot version updates.
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    # For github-actions this is always `/`; Dependabot scans
+    # .github/workflows from there.
+    directory: /
+    schedule:
+      interval: weekly
+    # One pull request for all actions rather than one per action. There are
+    # only four, and they are reviewed as a set anyway.
+    groups:
+      actions:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: 'chore(ci)'
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 4
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        patterns:
+          - '*'
+      production-dependencies:
+        dependency-type: production
+        patterns:
+          - '*'
+    commit-message:
+      prefix: chore
+      include: scope
+    # Every entry is scoped, so none of them suppress security updates -- a bare
+    # `dependency-name` would expand to `>= 0` and apply on the security path
+    # too. aws-cdk-lib and constructs are deliberately NOT listed: their floor
+    # invariant is enforced by scripts/check-peer-floors.mjs, so a bump that
+    # breaks it fails the build instead of needing to be hidden from Dependabot.
+    ignore:
+      # Only the accidental, deprecated publish that still holds `latest`.
+      # A genuine 3.x should raise a pull request.
+      - dependency-name: aws-cdk
+        versions:
+          - 3.0.0
+      # typescript 7 needs jsii 7 to exist. Minors are NOT ignored: jsii and
+      # typescript land in the same grouped pull request, reviewed as a pair.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
+      # Bounded by the Lambda runtime (NODEJS_22_X); 26 adds node:quic/ffi/vfs.
+      - dependency-name: '@types/node'
+        update-types:
+          - version-update:semver-major

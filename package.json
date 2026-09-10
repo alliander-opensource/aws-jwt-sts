@@ -45,12 +45,12 @@
     "watch": "tsc -w",
     "test": "jest --coverage",
     "cdk": "cdk",
-    "lint": "oxlint ."
+    "lint": "oxlint --deny-warnings ."
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.163",
     "@types/jest": "^30.0.0",
-    "@types/node": "^26.4.1",
+    "@types/node": "^24.13.3",
     "aws-cdk": "^2.1139.0",
     "aws-cdk-lib": "2.268.0",
     "aws-sdk-client-mock": "^4.1.0",

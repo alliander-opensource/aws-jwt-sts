@@ -10,42 +10,27 @@ permissions:
 
 jobs:
   build-and-publish:
-    runs-on: self-hosted
+    # Must be GitHub-hosted, not self-hosted. This job holds `id-token: write`
+    # for npm trusted publishing, so it must not share a runner pool with the
+    # pull request workflow -- on a public repository that pool is also running
+    # fork-supplied code, and anything left behind in $HOME, the tool cache or
+    # on PATH would be reachable from here. Nothing here needs internal network
+    # access. Same organisation-level runner prerequisite as pr.yml.
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write # npm trusted publishing (OIDC) -- no NPM_TOKEN needed
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # Must run BEFORE pnpm/action-setup, whose self-installer fetches
-      # @pnpm/exe from the npm registry. This selects the registry that
-      # DEPENDENCIES are installed from; publishing always targets the public
-      # registry (see the publish step).
-      - name: select npm registry
-        env:
-          ARTIFACTORY_TOKEN: ${{ secrets.ARTIFACTORY_TOKEN }}
-        run: |
-          set -euo pipefail
-          if [ -n "${ARTIFACTORY_TOKEN:-}" ]; then
-            registry='https://alliander.jfrog.io/artifactory/api/npm/alliander-npm-all/'
-            echo 'Installing through the Alliander Artifactory npm mirror.'
-            umask 077
-            {
-              echo "registry=${registry}"
-              echo "${registry#https:}:_authToken=\${NODE_AUTH_TOKEN}"
-              echo 'always-auth=true'
-            } > ~/.npmrc
-            echo "NODE_AUTH_TOKEN=${ARTIFACTORY_TOKEN}" >> "$GITHUB_ENV"
-          else
-            registry='https://registry.npmjs.org/'
-            echo 'No ARTIFACTORY_TOKEN available: falling back to the public npm registry.'
-            echo "registry=${registry}" > ~/.npmrc
-          fi
-          echo "npm_config_registry=${registry}" >> "$GITHUB_ENV"
-
+      # Dependencies install from the default registry, registry.npmjs.org --
+      # the same one the PR workflow uses, so the release builds from the tree
+      # that CI validated. No registry credential is configured; publishing
+      # authenticates over OIDC instead (see the publish step).
       - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
 
-      # node 24, not 26: jsii supports ^20/^22/^24 only.
+      # node 24, not 26: jsii supports ^22/^24 (and ^20, deprecated) only.
+      # Same version as the PR workflow -- releases must build on what CI built.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
@@ -64,19 +49,11 @@ jobs:
         run: pnpm run build
 
       - name: publish npm package
-        env:
-          # Publishing goes to the PUBLIC registry regardless of where the
-          # dependencies came from: consumers install this construct from
-          # npmjs.org and Construct Hub indexes it from there.
-          npm_config_registry: https://registry.npmjs.org/
-          # Blank so no Artifactory credential is ever presented to npmjs.org.
-          # With no token configured for the target registry, pnpm negotiates
-          # OIDC trusted publishing using the id-token permission above.
-          NODE_AUTH_TOKEN: ''
-        run: |
-          set -euo pipefail
-          echo 'registry=https://registry.npmjs.org/' > ~/.npmrc
-          # --no-git-checks: the release runs from a tag, so pnpm's default
-          # "must be on the publish branch" check does not apply.
-          # Registry and public access come from publishConfig in package.json.
-          pnpm publish --no-git-checks
+        # No token anywhere: with no credential configured for the target
+        # registry, pnpm negotiates npm trusted publishing over OIDC using the
+        # `id-token: write` permission above.
+        #
+        # --no-git-checks: the release runs from a tag, so pnpm's default
+        # "must be on the publish branch" check does not apply.
+        # Registry and public access come from publishConfig in package.json.
+        run: pnpm publish --no-git-checks
