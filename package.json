@@ -47,7 +47,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^25.8.0",
     "aws-cdk": "^2.1122.0",
-    "aws-cdk-lib": "2.254.0",
+    "aws-cdk-lib": "2.260.0",
     "aws-sdk-client-mock": "^4.1.0",
     "aws-sdk-client-mock-jest": "^4.1.0",
     "constructs": "10.6.0",
@@ -61,7 +61,7 @@
     "typescript": "~6.0.3"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "2.254.0",
+    "aws-cdk-lib": "2.260.0",
     "constructs": "^10.6.0"
   },
   "dependencies": {
