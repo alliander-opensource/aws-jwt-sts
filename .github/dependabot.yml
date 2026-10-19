@@ -36,11 +36,7 @@ updates:
     commit-message:
       prefix: chore
       include: scope
-    # Every entry is scoped, so none of them suppress security updates -- a bare
-    # `dependency-name` would expand to `>= 0` and apply on the security path
-    # too. aws-cdk-lib and constructs are deliberately NOT listed: their floor
-    # invariant is enforced by scripts/check-peer-floors.mjs, so a bump that
-    # breaks it fails the build instead of needing to be hidden from Dependabot.
+
     ignore:
       # Only the accidental, deprecated publish that still holds `latest`.
       # A genuine 3.x should raise a pull request.

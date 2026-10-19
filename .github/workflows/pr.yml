@@ -4,16 +4,10 @@ on:
   workflow_dispatch:
   pull_request:
 
-# Least privilege. This workflow only reads the repository: it needs no write
-# scope and no id-token, and it is never given a registry credential.
 permissions:
   contents: read
 
 jobs:
-  # NOTE: this job name is referenced by the branch protection rule on `main`
-  # as a required status check. Renaming or splitting it will leave pull
-  # requests waiting forever on a check that never reports -- update the branch
-  # protection rule first if you restructure this.
   pre-commit:
     runs-on: ubuntu-latest
     steps:
@@ -31,10 +25,6 @@ jobs:
 
       - uses: pnpm/action-setup@d9184bf108216479bc5a137cc391f4d7b14c870b # v6.1.0
 
-      # node 24, not 26: jsii warns that anything newer is untested. The
-      # compiler is the constraint here, not the runtime. jsii also accepts ^22,
-      # and ^20 but only as [DEPRECATED] -- 20 leaves jsii's support window on
-      # 2026-10-30, so 22 is the real floor. Keep in sync with CONTRIBUTING.md.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24

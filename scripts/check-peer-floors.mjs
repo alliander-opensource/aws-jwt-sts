@@ -2,15 +2,6 @@
 
 // Fails when a peerDependency does not have a devDependency pinned to the exact
 // floor of its range.
-//
-// jsii enforces the same rule -- lib/project-info.js compares
-// `devDependencies[name] !== semver.minVersion(peerRange).raw` -- but only
-// reports JSII6 (metadata/missing-dev-dependency), which is a warning that
-// exits 0. Its severity cannot be raised, because it is emitted before
-// diagnostic overrides load, so not even `jsii --fail-on-warnings` turns it into
-// a failure. Without this check a dependency bump merges green while quietly
-// breaking the guarantee that the declared peer range is actually compiled
-// against.
 
 import { readFileSync } from 'node:fs';
 

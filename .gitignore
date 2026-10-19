@@ -23,3 +23,6 @@ jsii/
 
 # Local `pnpm pack` / `npm pack` output.
 *.tgz
+
+.npmrc
+package-lock.json
