@@ -6,16 +6,16 @@
     ]
   },
   "bundled": {
-    "@aws-lambda-powertools/logger": "^2.33.0",
-    "@aws-sdk/client-kms": "^3.1045.0",
-    "@aws-sdk/client-s3": "^3.1045.0",
-    "@types/aws-lambda": "^8.10.161",
+    "@aws-lambda-powertools/logger": "^2.35.0",
+    "@aws-sdk/client-kms": "^3.1125.0",
+    "@aws-sdk/client-s3": "^3.1125.0",
+    "@types/aws-lambda": "^8.10.163",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
-    "jsrsasign": "^11.1.3"
+    "jsrsasign": "^11.1.5"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.253.1",
+    "aws-cdk-lib": "^2.268.0",
     "constructs": "^10.6.0"
   },
   "dependencyClosure": {
@@ -155,6 +155,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_accountaccess": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.AccountAccess"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.accountaccess"
+            },
+            "python": {
+              "module": "aws_cdk.aws_accountaccess"
+            }
+          }
+        },
         "aws-cdk-lib.aws_acmpca": {
           "targets": {
             "dotnet": {
@@ -165,6 +178,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_acmpca"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_agentregistry": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.AgentRegistry"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.agentregistry"
+            },
+            "python": {
+              "module": "aws_cdk.aws_agentregistry"
             }
           }
         },
@@ -532,6 +558,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_awsexternalanthropic": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.AWSExternalAnthropic"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.awsexternalanthropic"
+            },
+            "python": {
+              "module": "aws_cdk.aws_awsexternalanthropic"
+            }
+          }
+        },
         "aws-cdk-lib.aws_b2bi": {
           "targets": {
             "dotnet": {
@@ -842,6 +881,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_cloudfront_origins"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_cloudhsm": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.CloudHSM"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.cloudhsm"
+            },
+            "python": {
+              "module": "aws_cdk.aws_cloudhsm"
             }
           }
         },
@@ -1196,6 +1248,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_dataexchange": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.DataExchange"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.dataexchange"
+            },
+            "python": {
+              "module": "aws_cdk.aws_dataexchange"
+            }
+          }
+        },
         "aws-cdk-lib.aws_datapipeline": {
           "targets": {
             "dotnet": {
@@ -1388,6 +1453,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_docdbelastic"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_drs": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.DRS"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.drs"
+            },
+            "python": {
+              "module": "aws_cdk.aws_drs"
             }
           }
         },
@@ -2190,6 +2268,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_iotsecuretunneling": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.IoTSecureTunneling"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.iotsecuretunneling"
+            },
+            "python": {
+              "module": "aws_cdk.aws_iotsecuretunneling"
+            }
+          }
+        },
         "aws-cdk-lib.aws_iotsitewise": {
           "targets": {
             "dotnet": {
@@ -2723,6 +2814,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_mgn": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.MGN"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.mgn"
+            },
+            "python": {
+              "module": "aws_cdk.aws_mgn"
+            }
+          }
+        },
         "aws-cdk-lib.aws_mpa": {
           "targets": {
             "dotnet": {
@@ -2811,6 +2915,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_networkfirewall"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_networkflowmonitor": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.NetworkFlowMonitor"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.networkflowmonitor"
+            },
+            "python": {
+              "module": "aws_cdk.aws_networkflowmonitor"
             }
           }
         },
@@ -2931,6 +3048,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_opensearch": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.OpenSearch"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.opensearch"
+            },
+            "python": {
+              "module": "aws_cdk.aws_opensearch"
+            }
+          }
+        },
         "aws-cdk-lib.aws_opensearchserverless": {
           "targets": {
             "dotnet": {
@@ -3006,6 +3136,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_osis"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_outposts": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.Outposts"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.outposts"
+            },
+            "python": {
+              "module": "aws_cdk.aws_outposts"
             }
           }
         },
@@ -3279,6 +3422,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_resiliencehub"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_resiliencehubv2": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.ResilienceHubV2"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.resiliencehubv2"
+            },
+            "python": {
+              "module": "aws_cdk.aws_resiliencehubv2"
             }
           }
         },
@@ -3662,6 +3818,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_scn": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.SCN"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.scn"
+            },
+            "python": {
+              "module": "aws_cdk.aws_scn"
+            }
+          }
+        },
         "aws-cdk-lib.aws_sdb": {
           "targets": {
             "dotnet": {
@@ -3724,6 +3893,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_securitylake"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_serverlessrepo": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.ServerlessRepo"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.serverlessrepo"
+            },
+            "python": {
+              "module": "aws_cdk.aws_serverlessrepo"
             }
           }
         },
@@ -3987,6 +4169,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_storagegateway": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.StorageGateway"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.storagegateway"
+            },
+            "python": {
+              "module": "aws_cdk.aws_storagegateway"
+            }
+          }
+        },
         "aws-cdk-lib.aws_supportapp": {
           "targets": {
             "dotnet": {
@@ -3997,6 +4192,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_supportapp"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_supportauthz": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.SupportAuthZ"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.supportauthz"
+            },
+            "python": {
+              "module": "aws_cdk.aws_supportauthz"
             }
           }
         },
@@ -4026,6 +4234,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_textract": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.Textract"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.textract"
+            },
+            "python": {
+              "module": "aws_cdk.aws_textract"
+            }
+          }
+        },
         "aws-cdk-lib.aws_timestream": {
           "targets": {
             "dotnet": {
@@ -4039,6 +4260,19 @@
             }
           }
         },
+        "aws-cdk-lib.aws_transcribe": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.Transcribe"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.transcribe"
+            },
+            "python": {
+              "module": "aws_cdk.aws_transcribe"
+            }
+          }
+        },
         "aws-cdk-lib.aws_transfer": {
           "targets": {
             "dotnet": {
@@ -4049,6 +4283,19 @@
             },
             "python": {
               "module": "aws_cdk.aws_transfer"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_translate": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.Translate"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.translate"
+            },
+            "python": {
+              "module": "aws_cdk.aws_translate"
             }
           }
         },
@@ -4140,6 +4387,32 @@
             },
             "python": {
               "module": "aws_cdk.aws_wafv2"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_wellarchitected": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.WellArchitected"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.wellarchitected"
+            },
+            "python": {
+              "module": "aws_cdk.aws_wellarchitected"
+            }
+          }
+        },
+        "aws-cdk-lib.aws_wickr": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.AWS.Wickr"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.services.wickr"
+            },
+            "python": {
+              "module": "aws_cdk.aws_wickr"
             }
           }
         },
@@ -4309,6 +4582,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_accountaccess": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.AccountAccess"
+            },
+            "go": {
+              "packageName": "interfacesawsaccountaccess"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.accountaccess"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_accountaccess"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_acmpca": {
           "targets": {
             "dotnet": {
@@ -4322,6 +4611,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_acmpca"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_agentregistry": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.AgentRegistry"
+            },
+            "go": {
+              "packageName": "interfacesawsagentregistry"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.agentregistry"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_agentregistry"
             }
           }
         },
@@ -4709,6 +5014,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_awsexternalanthropic": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.AWSExternalAnthropic"
+            },
+            "go": {
+              "packageName": "interfacesawsawsexternalanthropic"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.awsexternalanthropic"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_awsexternalanthropic"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_b2bi": {
           "targets": {
             "dotnet": {
@@ -4770,6 +5091,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_batch"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_bcm": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.BCM"
+            },
+            "go": {
+              "packageName": "interfacesawsbcm"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.bcm"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_bcm"
             }
           }
         },
@@ -5090,6 +5427,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_cloudfront"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_cloudhsm": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.CloudHSM"
+            },
+            "go": {
+              "packageName": "interfacesawscloudhsm"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.cloudhsm"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_cloudhsm"
             }
           }
         },
@@ -5477,6 +5830,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_dataexchange": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.DataExchange"
+            },
+            "go": {
+              "packageName": "interfacesawsdataexchange"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.dataexchange"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_dataexchange"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_datapipeline": {
           "targets": {
             "dotnet": {
@@ -5714,6 +6083,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_docdbelastic"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_drs": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.DRS"
+            },
+            "go": {
+              "packageName": "interfacesawsdrs"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.drs"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_drs"
             }
           }
         },
@@ -6549,6 +6934,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_iotsecuretunneling": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.IoTSecureTunneling"
+            },
+            "go": {
+              "packageName": "interfacesawsiotsecuretunneling"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.iotsecuretunneling"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_iotsecuretunneling"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_iotsitewise": {
           "targets": {
             "dotnet": {
@@ -7141,6 +7542,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_mgn": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.MGN"
+            },
+            "go": {
+              "packageName": "interfacesawsmgn"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.mgn"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_mgn"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_mpa": {
           "targets": {
             "dotnet": {
@@ -7250,6 +7667,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_networkfirewall"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_networkflowmonitor": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.NetworkFlowMonitor"
+            },
+            "go": {
+              "packageName": "interfacesawsnetworkflowmonitor"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.networkflowmonitor"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_networkflowmonitor"
             }
           }
         },
@@ -7397,6 +7830,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_opensearch": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.OpenSearch"
+            },
+            "go": {
+              "packageName": "interfacesawsopensearch"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.opensearch"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_opensearch"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_opensearchserverless": {
           "targets": {
             "dotnet": {
@@ -7490,6 +7939,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_osis"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_outposts": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.Outposts"
+            },
+            "go": {
+              "packageName": "interfacesawsoutposts"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.outposts"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_outposts"
             }
           }
         },
@@ -7826,6 +8291,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_resiliencehub"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_resiliencehubv2": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.ResilienceHubV2"
+            },
+            "go": {
+              "packageName": "interfacesawsresiliencehubv2"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.resiliencehubv2"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_resiliencehubv2"
             }
           }
         },
@@ -8181,6 +8662,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_scn": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.SCN"
+            },
+            "go": {
+              "packageName": "interfacesawsscn"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.scn"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_scn"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_sdb": {
           "targets": {
             "dotnet": {
@@ -8258,6 +8755,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_securitylake"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_serverlessrepo": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.ServerlessRepo"
+            },
+            "go": {
+              "packageName": "interfacesawsserverlessrepo"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.serverlessrepo"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_serverlessrepo"
             }
           }
         },
@@ -8533,6 +9046,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_storagegateway": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.StorageGateway"
+            },
+            "go": {
+              "packageName": "interfacesawsstoragegateway"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.storagegateway"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_storagegateway"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_supportapp": {
           "targets": {
             "dotnet": {
@@ -8546,6 +9075,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_supportapp"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_supportauthz": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.SupportAuthZ"
+            },
+            "go": {
+              "packageName": "interfacesawssupportauthz"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.supportauthz"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_supportauthz"
             }
           }
         },
@@ -8581,6 +9126,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_textract": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.Textract"
+            },
+            "go": {
+              "packageName": "interfacesawstextract"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.textract"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_textract"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_timestream": {
           "targets": {
             "dotnet": {
@@ -8597,6 +9158,22 @@
             }
           }
         },
+        "aws-cdk-lib.interfaces.aws_transcribe": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.Transcribe"
+            },
+            "go": {
+              "packageName": "interfacesawstranscribe"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.transcribe"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_transcribe"
+            }
+          }
+        },
         "aws-cdk-lib.interfaces.aws_transfer": {
           "targets": {
             "dotnet": {
@@ -8610,6 +9187,22 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_transfer"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_translate": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.Translate"
+            },
+            "go": {
+              "packageName": "interfacesawstranslate"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.translate"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_translate"
             }
           }
         },
@@ -8722,6 +9315,38 @@
             },
             "python": {
               "module": "aws_cdk.interfaces.aws_wafv2"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_wellarchitected": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.WellArchitected"
+            },
+            "go": {
+              "packageName": "interfacesawswellarchitected"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.wellarchitected"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_wellarchitected"
+            }
+          }
+        },
+        "aws-cdk-lib.interfaces.aws_wickr": {
+          "targets": {
+            "dotnet": {
+              "namespace": "Amazon.CDK.Interfaces.Wickr"
+            },
+            "go": {
+              "packageName": "interfacesawswickr"
+            },
+            "java": {
+              "package": "software.amazon.awscdk.interfaces.wickr"
+            },
+            "python": {
+              "module": "aws_cdk.interfaces.aws_wickr"
             }
           }
         },
@@ -8941,7 +9566,7 @@
   },
   "description": "@alliander-opensource/aws-jwt-sts",
   "homepage": "https://github.com/alliander-opensource/aws-jwt-sts.git",
-  "jsiiVersion": "5.9.40 (build 8be98bb)",
+  "jsiiVersion": "6.0.12 (build 471f453)",
   "keywords": [
     "awscdk"
   ],
@@ -8952,11 +9577,12 @@
         "hasDefaultInterfaces": true
       }
     },
-    "tscRootDir": "B:/GHrepos/aws-jwt-sts/src"
+    "tscOutDir": "dist",
+    "tscRootDir": "src"
   },
   "name": "@alliander-opensource/aws-jwt-sts",
   "readme": {
-    "markdown": "# Use IAM roles to authenticate principals in workloads outside of AWS using JWT\n\nThere is an inherent risk in maintaining and storing permanent credentials. In their lifetime, they are bound to be shared, compromised, and lost. When shared, it is often among a broader audience than initially intended. They can also be lost and found, sometimes by the wrong person. And when any of this occurs, it can put your systems, data or even organization at risk.\n\nWorkloads running on AWS can communicate with each other or with AWS services without the need of storing permanent credentials by assuming roles or instance profiles. However, if one of the workloads lives outside of AWS, AWS principals can no longer be used for authentication.\n\nAn alternative to authenticating with external workloads is to use short-lived credentials issued by a trusted party, the issuer, that the target system can accept. JWTs (JSON Web Tokens), as used by the OIDC (OpenID Connect) standard, are an example of such credentials. JWTs are short-lived credentials that can be signed and verified using a public key in what is known as public-key cryptography.\n\n## Secure Token Service (STS)\n\nExchanging credentials from on form to the other is done with a Secure Token Service (STS) function. AWS also provides STS functions not the one we need. Only the other way around: to exchange a JWT to IAM Session which is called [AssumeRoleWithWebIdentity](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html).\nThis repo contains a CDK Construct which will deploy a new function which adds the function to exchange an AWS IAM (Session) credential with a signed JWT.\n\n## Solution overview\n\nThe solution provides 2 endpoints; an OIDC discovery endpoint and a token endpoint. The OIDC discovery endpoint can be used to establish a trust between te STS function and a resource. The token endpoint can be used by client in AWS to exchange their IAM credentials to a JWT.\n\nWhen a client wants to retrieve a JWT key, it will invoke the token API via the API GW. The backing lambda creates a JWT based on the invoking IAM identity and invokes KMS to sign the token.\n\nOn time based events, EventBridge will trigger a Step function rotation flow. This flow triggers a lambda which in subsequent steps will create a new KMS signing key. Based on that signing key a JWKS is generated and stored in S3 together with discovery files.\n\n![Solution architecture](/doc/sts-jwt-function.drawio.png \"Solution architecture\")\n\n## Using the construct\n\n1. Init a new typescript CDK project\n    `cdk init app --language typescript`\n2. Config npm to retrieve packages from github package repository\n    `echo @alliander-opensource:registry=https://npm.pkg.github.com > .npmrc`\n3. Install the aws-jwt-sts construct\n    `npm install @alliander-opensource/aws-jwt-sts`\n4. Edit lib/my-sts-stack.ts to add the construct to the stack\n    See the comments in the code for possible options\n\n```ts\nimport * as cdk from 'aws-cdk-lib';\nimport { Construct } from 'constructs';\nimport { AwsJwtSts, wafUsage } from '@alliander-opensource/aws-jwt-sts'\n\nexport class MyStsStack extends cdk.Stack {\n  constructor(scope: Construct, id: string, props?: cdk.StackProps) {\n    super(scope, id, props);\n\n    new AwsJwtSts(this, 'sts', {\n      /*\n      * Mandatory:\n      *\n      * Set the default aud claim in the jwt, when not specified in the GET param\n      */\n      defaultAudience: 'api://resourceAudience',\n\n      /*\n      * Optional: when using a custom domain\n      *\n      * The construct can run on a custom domain, for this the following properties need to be added\n      * Ensure a hosted zone is present in the account where the sts function will be deployed\n      * Both needed to be set to use the custom domain\n      */\n      hostedZoneName: 'test.example.com', // domain name of the zone\n      hostedZoneId: 'ZXXXXXXXXXXXXXXXXXXXX', // zoneId of the zone\n\n      /*\n      * Optional; when using a custom domain the subdomains of the endpoints can optionally be set\n      */\n      oidcSubdomain: 'oidc', // default 'oidc' for the discovery endpoint (cloudfront)\n      tokenSubdomain: 'token', // default 'token' for the the token api gw endpoint\n\n      /*\n      * Optional:\n      *\n      * AWS WAF can be applied to the API GW\n      * apiGwWaf acceptes the folling values:\n      * wafUsage.ConstructProvided to use the WAF defined by the contruct\n      * wafUsage.ProvideWebAclArn in combination with the apiGwWafWebAclArn param to specify an already deployed webAcl\n      *\n      * By not setting apiGwWaf, no WAF will be deployed\n      */\n      apiGwWaf: wafUsage.ProvideWebAclArn,\n\n      /*\n      * Optional; only applicable if apiGwWaf is set to: wafUsage.ProvideWebAclArn\n      *\n      * Specify the WebAcl to use for the API GW\n      */\n      apiGwWafWebAclArn: 'arn:aws:wafv2:{REGION}:{ACCOUNTID}:regional/webacl/{WebAclName}/{WebAclId}',\n\n      /*\n      * Optional:\n      *\n      * When used in a multi account structure with AWS Organizations specify the organization ID.\n      * This sets a resource policy on the API GW Stage so that the whole org may access it\n      * When not specified no policy is places on the API GW Stage and it will only allow access from within that account\n      */\n      orgId: 'o-xxxxxxxxxx'\n\n    })\n  }\n}\n```\n\n5. Deploy the stack\n   `cdk deploy`\n\nThe stack outputs the urls of the endpoints. So if no custom domain is provided observe the CDK Stack output.\n\n## Using the STS function\n\nA token from the STS function can be obained by invoking the token endpoint.\n`GET https://$host/token`\noptionally an audience can be provided if this needs to be different than the installed default\n`GET https://$host/token?aud=api://myAudience`\n\n> Note: The IAM Role / User invoking the endpoint must have *execute-api:Invoke* permissions\n\nIn CDK these permission is added as followed:\n\n```ts\nrole.addToPolicy(new iam.PolicyStatement({\n      actions: ['execute-api:Invoke'],\n      resources: ['*']\n    }))\n```\n\n> Note: keep in mind that *resource '\\*'* should only be used if no other API GW's with IAM auth are used in that account.\n\n### Test obtaining a JWT\n\n1. Ensure the AWS IAM Role / User invoking the token endpoint has execute-api permissions. If you are using administrator access then that is more than sufficient.\n2. Use a shell with AWS cli logged in, you can use your cli with which you deployed the stack or use cloudshell for this.\n3. Install awscurl for authentication\n    `pip3 install awscurl`\n4. Install jwt-cli for jwt formatting\n    `npm install -g jwt-cli`\n5. Invoke the api\n    `awscurl {your_token_endpoint}/token --service execute-api --region {your_region} | jq -r .token | jwt decode –`\n6. Observe the JWT\n"
+    "markdown": "# Use IAM roles to authenticate principals in workloads outside of AWS using JWT\n\nThere is an inherent risk in maintaining and storing permanent credentials. In their lifetime, they are bound to be shared, compromised, and lost. When shared, it is often among a broader audience than initially intended. They can also be lost and found, sometimes by the wrong person. And when any of this occurs, it can put your systems, data or even organization at risk.\n\nWorkloads running on AWS can communicate with each other or with AWS services without the need of storing permanent credentials by assuming roles or instance profiles. However, if one of the workloads lives outside of AWS, AWS principals can no longer be used for authentication.\n\nAn alternative to authenticating with external workloads is to use short-lived credentials issued by a trusted party, the issuer, that the target system can accept. JWTs (JSON Web Tokens), as used by the OIDC (OpenID Connect) standard, are an example of such credentials. JWTs are short-lived credentials that can be signed and verified using a public key in what is known as public-key cryptography.\n\n## Secure Token Service (STS)\n\nExchanging credentials from on form to the other is done with a Secure Token Service (STS) function. AWS also provides STS functions not the one we need. Only the other way around: to exchange a JWT to IAM Session which is called [AssumeRoleWithWebIdentity](https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRoleWithWebIdentity.html).\nThis repo contains a CDK Construct which will deploy a new function which adds the function to exchange an AWS IAM (Session) credential with a signed JWT.\n\n## Solution overview\n\nThe solution provides 2 endpoints; an OIDC discovery endpoint and a token endpoint. The OIDC discovery endpoint can be used to establish a trust between te STS function and a resource. The token endpoint can be used by client in AWS to exchange their IAM credentials to a JWT.\n\nWhen a client wants to retrieve a JWT key, it will invoke the token API via the API GW. The backing lambda creates a JWT based on the invoking IAM identity and invokes KMS to sign the token.\n\nOn time based events, EventBridge will trigger a Step function rotation flow. This flow triggers a lambda which in subsequent steps will create a new KMS signing key. Based on that signing key a JWKS is generated and stored in S3 together with discovery files.\n\n![Solution architecture](/doc/sts-jwt-function.drawio.png \"Solution architecture\")\n\n## Using the construct\n\n1. Init a new typescript CDK project\n    `cdk init app --language typescript`\n2. Install the aws-jwt-sts construct. It is published to the public npm registry, so no extra registry configuration is required.\n    `npm install @alliander-opensource/aws-jwt-sts`\n3. Edit lib/my-sts-stack.ts to add the construct to the stack\n    See the comments in the code for possible options\n\n```ts\nimport * as cdk from 'aws-cdk-lib';\nimport { Construct } from 'constructs';\nimport { AwsJwtSts, WafUsage } from '@alliander-opensource/aws-jwt-sts'\n\nexport class MyStsStack extends cdk.Stack {\n  constructor(scope: Construct, id: string, props?: cdk.StackProps) {\n    super(scope, id, props);\n\n    new AwsJwtSts(this, 'sts', {\n      /*\n      * Mandatory:\n      *\n      * Set the default aud claim in the jwt, when not specified in the GET param\n      */\n      defaultAudience: 'api://resourceAudience',\n\n      /*\n      * Optional: when using a custom domain\n      *\n      * The construct can run on a custom domain, for this the following properties need to be added\n      * Ensure a hosted zone is present in the account where the sts function will be deployed\n      * Both needed to be set to use the custom domain\n      */\n      hostedZoneName: 'test.example.com', // domain name of the zone\n      hostedZoneId: 'ZXXXXXXXXXXXXXXXXXXXX', // zoneId of the zone\n\n      /*\n      * Optional; when using a custom domain the subdomains of the endpoints can optionally be set\n      */\n      oidcSubdomain: 'oidc', // default 'oidc' for the discovery endpoint (cloudfront)\n      tokenSubdomain: 'token', // default 'token' for the the token api gw endpoint\n\n      /*\n      * Optional:\n      *\n      * AWS WAF can be applied to the API GW\n      * apiGwWaf accepts the following values:\n      * WafUsage.CONSTRUCT_PROVIDED to use the WAF defined by the construct\n      * WafUsage.PROVIDE_WEB_ACL_ARN in combination with the apiGwWafWebAclArn param to specify an already deployed webAcl\n      *\n      * By not setting apiGwWaf, no WAF will be deployed\n      */\n      apiGwWaf: WafUsage.PROVIDE_WEB_ACL_ARN,\n\n      /*\n      * Optional; only applicable if apiGwWaf is set to: WafUsage.PROVIDE_WEB_ACL_ARN\n      *\n      * Specify the WebAcl to use for the API GW\n      */\n      apiGwWafWebAclArn: 'arn:aws:wafv2:{REGION}:{ACCOUNTID}:regional/webacl/{WebAclName}/{WebAclId}',\n\n      /*\n      * Optional:\n      *\n      * When used in a multi account structure with AWS Organizations specify the organization ID.\n      * This sets a resource policy on the API GW Stage so that the whole org may access it\n      * When not specified no policy is places on the API GW Stage and it will only allow access from within that account\n      */\n      orgId: 'o-xxxxxxxxxx'\n\n    })\n  }\n}\n```\n\n4. Deploy the stack\n   `cdk deploy`\n\nThe stack outputs the urls of the endpoints. So if no custom domain is provided observe the CDK Stack output.\n\n## Using the STS function\n\nA token from the STS function can be obained by invoking the token endpoint.\n`GET https://$host/token`\noptionally an audience can be provided if this needs to be different than the installed default\n`GET https://$host/token?aud=api://myAudience`\n\n> Note: The IAM Role / User invoking the endpoint must have *execute-api:Invoke* permissions\n\nIn CDK these permission is added as followed:\n\n```ts\nrole.addToPolicy(new iam.PolicyStatement({\n      actions: ['execute-api:Invoke'],\n      resources: ['*']\n    }))\n```\n\n> Note: keep in mind that *resource '\\*'* should only be used if no other API GW's with IAM auth are used in that account.\n\n### Test obtaining a JWT\n\n1. Ensure the AWS IAM Role / User invoking the token endpoint has execute-api permissions. If you are using administrator access then that is more than sufficient.\n2. Use a shell with AWS cli logged in, you can use your cli with which you deployed the stack or use cloudshell for this.\n3. Install awscurl for authentication\n    `pip3 install awscurl`\n4. Install jwt-cli for jwt formatting\n    `npm install -g jwt-cli`\n5. Invoke the api\n    `awscurl {your_token_endpoint}/token --service execute-api --region {your_region} | jq -r .token | jwt decode –`\n6. Observe the JWT\n\n## Contributing\n\nDevelopment setup, the supported Node.js versions, registry configuration and the reasoning behind the pinned dependency ranges are documented in [CONTRIBUTING.md](CONTRIBUTING.md).\n"
   },
   "repository": {
     "type": "git",
@@ -9384,6 +10010,6 @@
       "symbolId": "src/index:WafUsage"
     }
   },
-  "version": "0.3.7",
-  "fingerprint": "w4mlFtUIVdZ9gAqILuegEPe9Gy+8IEbVebxjvyv9BZ8="
+  "version": "0.4.0",
+  "fingerprint": "cpeuN/q0RweXY09zrja7ONRqL3FWn/BfhFnSH431BeA="
 }
