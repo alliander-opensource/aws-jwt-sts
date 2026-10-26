@@ -6,10 +6,10 @@
     ]
   },
   "bundled": {
-    "@aws-lambda-powertools/logger": "^2.35.0",
-    "@aws-sdk/client-kms": "^3.1125.0",
-    "@aws-sdk/client-s3": "^3.1125.0",
-    "@types/aws-lambda": "^8.10.163",
+    "@aws-lambda-powertools/logger": "^2.36.0",
+    "@aws-sdk/client-kms": "^3.1153.0",
+    "@aws-sdk/client-s3": "^3.1153.0",
+    "@types/aws-lambda": "^8.10.164",
     "@types/jsrsasign": "^10.5.15",
     "base64url": "^3.0.1",
     "jsrsasign": "^11.1.5"
@@ -9566,11 +9566,11 @@
   },
   "description": "@alliander-opensource/aws-jwt-sts",
   "homepage": "https://github.com/alliander-opensource/aws-jwt-sts.git",
-  "jsiiVersion": "6.0.12 (build 471f453)",
+  "jsiiVersion": "6.0.18 (build e678771)",
   "keywords": [
     "awscdk"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "metadata": {
     "jsii": {
       "pacmak": {
@@ -10011,5 +10011,5 @@
     }
   },
   "version": "0.4.0",
-  "fingerprint": "cpeuN/q0RweXY09zrja7ONRqL3FWn/BfhFnSH431BeA="
+  "fingerprint": "jtu/YOSxNVfDxl8BqUK+QWChzpjBs2QqSmZAMV4FftI="
 }

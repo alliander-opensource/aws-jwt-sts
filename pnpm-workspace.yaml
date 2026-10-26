@@ -64,7 +64,7 @@ overrides:
   # Collapse any transitive jest onto the single version we develop against.
   # Keep this in sync with devDependencies.jest in package.json. (Spelling it
   # out rather than using the old "$jest" reference, which pnpm deprecated.)
-  jest: "^30.5.1"
+  jest: "^30.5.2"
   # Transitive-dependency CVE pins. Raise these, never lower them.
   # brace-expansion <1.1.13 is the ReDoS advisory reached via jest.
   "brace-expansion@<1.1.13": "1.1.13"
