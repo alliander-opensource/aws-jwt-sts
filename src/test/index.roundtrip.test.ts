@@ -5,9 +5,9 @@
 // End-to-end round trip across both Lambda handlers: the JWKS that keyrotate
 // publishes must verify the token that sign issues. The unit tests pin each
 // handler's output in isolation, but a consumer only cares that the two agree,
-// and that the token is encoded the way JWT verifiers expect. This is the guard
-// for swapping the libraries underneath (jsrsasign, base64url) without changing
-// behaviour.
+// and that the token is encoded the way JWT verifiers expect. It guarded the
+// move from jsrsasign/base64url to node:crypto and Buffer, and guards any
+// later change to how keys are exported or tokens are encoded.
 
 import { KeyObject, createPublicKey, generateKeyPairSync, sign, verify } from 'node:crypto'
 import {

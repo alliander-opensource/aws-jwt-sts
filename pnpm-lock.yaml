@@ -6,7 +6,11 @@ settings:
 
 overrides:
   jest: ^30.5.2
-  brace-expansion@<1.1.13: 1.1.13
+  brace-expansion@<1.1.21: 1.1.21
+  brace-expansion@>=2.0.0 <2.1.7: 2.1.7
+  brace-expansion@>=3.0.0 <3.0.9: 3.0.9
+  brace-expansion@>=4.0.0 <5.0.12: 5.0.12
+  handlebars@<4.7.10: 4.7.10
   diff: 9.0.0
 
 importers:
@@ -25,15 +29,6 @@ importers:
       '@types/aws-lambda':
         specifier: ^8.10.164
         version: 8.10.164
-      '@types/jsrsasign':
-        specifier: ^10.5.15
-        version: 10.5.15
-      base64url:
-        specifier: ^3.0.1
-        version: 3.0.1
-      jsrsasign:
-        specifier: ^11.1.5
-        version: 11.1.5
     devDependencies:
       '@types/jest':
         specifier: ^30.0.0
@@ -950,9 +945,6 @@ packages:
   '@types/jest@30.0.0':
     resolution: {integrity: sha512-XTYugzhuwqWjws0CVz8QpM36+T+Dz5mTEBKhNs/esGLnCIlGdRy+Dq78NRjd7ls7r8BC8ZRMOrKlkO1hU0JOwA==}
 
-  '@types/jsrsasign@10.5.15':
-    resolution: {integrity: sha512-3stUTaSRtN09PPzVWR6aySD9gNnuymz+WviNHoTb85dKu+BjaV4uBbWWGykBBJkfwPtcNZVfTn2lbX00U+yhpQ==}
-
   '@types/node@24.19.2':
     resolution: {integrity: sha512-93d49wCWJkCyN87MxLpNN6KXPCwFw7bVUg79mGUV1OS40JGWwVCr8n61DXCSqz7CV6/VfPkb7xec7uP2M+QHWQ==}
 
@@ -1221,10 +1213,6 @@ packages:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
 
-  base64url@3.0.1:
-    resolution: {integrity: sha512-ir1UPr3dkwexU7FdV8qBBbNDRUhMmIekYMFZfi+C/sLNnRESKPl23nB9b2pltqfOQNnGzsDdId90AEtG5tCx4A==}
-    engines: {node: '>=6.0.0'}
-
   baseline-browser-mapping@2.11.20:
     resolution: {integrity: sha512-H0ulySigv6icDJ1F7SjtdCD6PrhTpdYCmP0CactWy1+ekh0AFd0o1Wn5T8b+hnTmdBx19u9yhL6wvCylXMY7zw==}
     engines: {node: '>=6.0.0'}
@@ -1233,11 +1221,11 @@ packages:
   bowser@2.14.1:
     resolution: {integrity: sha512-tzPjzCxygAKWFOJP011oxFHs57HzIhOEracIgAePE4pqB3LikALKnSzUyU4MGs9/iCEUuHlAJTjTc5M+u7YEGg==}
 
-  brace-expansion@2.1.4:
-    resolution: {integrity: sha512-hGfVzPxthbf3+2yjg/RBs60cB0FhqBS/zvdV/4wn4/BmN0bNMMHPc4V/BbFieqf1TKAGGAHnY4eSjajCl0f2Xg==}
+  brace-expansion@2.1.7:
+    resolution: {integrity: sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==}
 
-  brace-expansion@5.0.9:
-    resolution: {integrity: sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==}
+  brace-expansion@5.0.12:
+    resolution: {integrity: sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==}
     engines: {node: 20 || >=22}
 
   browserslist@4.28.8:
@@ -1699,10 +1687,6 @@ packages:
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
-
-  jsrsasign@11.1.5:
-    resolution: {integrity: sha512-i6mAjey0/4UQmlOaNS2vROl8EkWV8Ei436reJAby2OPQ3lF6uXSs1VYpnM8hndmmCMFIzNc04Uw2GF+0JVLFbg==}
-    deprecated: This package is no longer maintained.
 
   just-extend@6.2.0:
     resolution: {integrity: sha512-cYofQu2Xpom82S6qD778jBDpwvvy39s1l/hrYij2u9AMdQcGRpaBu6kY4mVhuno5kJVi1DAz4aiphA2WI1/OAw==}
@@ -3099,8 +3083,6 @@ snapshots:
       expect: 30.5.2
       pretty-format: 30.5.1
 
-  '@types/jsrsasign@10.5.15': {}
-
   '@types/node@24.19.2':
     dependencies:
       undici-types: 7.24.6
@@ -3325,17 +3307,15 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  base64url@3.0.1: {}
-
   baseline-browser-mapping@2.11.20: {}
 
   bowser@2.14.1: {}
 
-  brace-expansion@2.1.4:
+  brace-expansion@2.1.7:
     dependencies:
       balanced-match: 1.0.2
 
-  brace-expansion@5.0.9:
+  brace-expansion@5.0.12:
     dependencies:
       balanced-match: 4.0.4
 
@@ -3975,8 +3955,6 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
-  jsrsasign@11.1.5: {}
-
   just-extend@6.2.0: {}
 
   jwt-decode@4.0.0: {}
@@ -4021,11 +3999,11 @@ snapshots:
 
   minimatch@10.2.6:
     dependencies:
-      brace-expansion: 5.0.9
+      brace-expansion: 5.0.12
 
   minimatch@9.0.9:
     dependencies:
-      brace-expansion: 2.1.4
+      brace-expansion: 2.1.7
 
   minimist@1.2.8: {}
 

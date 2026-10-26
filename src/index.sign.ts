@@ -6,7 +6,6 @@ import { Logger } from '@aws-lambda-powertools/logger'
 import { DescribeKeyCommand, KMSClient, ListResourceTagsCommand, SignCommand, Tag } from '@aws-sdk/client-kms'
 /* eslint-disable-next-line import/no-unresolved */
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
-import base64url from 'base64url'
 
 const KEY_ALIAS_CURRENT = process.env.CURRENT_KEY!.toString()
 const logger = new Logger()
@@ -71,8 +70,8 @@ export const handler = async (apiEvent: APIGatewayEvent, _context: Context): Pro
   }
 
   // Prepare message to be signed by KMS
-  const tokenHeaders = base64url(JSON.stringify(headers))
-  const tokenPayload = base64url(JSON.stringify(payload))
+  const tokenHeaders = Buffer.from(JSON.stringify(headers)).toString('base64url')
+  const tokenPayload = Buffer.from(JSON.stringify(payload)).toString('base64url')
 
   // Sign message with KMS
   const signResponse = await kms.send(new SignCommand({
@@ -85,10 +84,7 @@ export const handler = async (apiEvent: APIGatewayEvent, _context: Context): Pro
 
   const signature = Buffer
     .from(signResponse.Signature as Uint8Array)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '')
+    .toString('base64url')
 
   const token = `${tokenHeaders}.${tokenPayload}.${signature}`
   logger.debug(token)
