@@ -19,12 +19,10 @@ We recognize different levels of contributions as shown below in increasing orde
 3. Fix bugs.
 4. Improve the project with developing new features.
 
-
 ## Filing bugs, security vulnerability or feature requests
 
 You can file bugs against and feature requests for the project via github issues. Consult [GitHub Help](https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/creating-an-issue) for more
 information on using github issues.
-
 
 ## Community Guidelines
 
@@ -44,7 +42,7 @@ The process for a code change and pull request you should follow:
 
 1. Create a topic branch in your local repository, following the naming format
 "feature-[description]". For more information see the Git branching guideline.
-1. Make changes, compile, and test thoroughly. Ensure any install or build dependencies are removed before the end of the layer when doing a build. Code style should match existing style and conventions, and changes should be focused on the topic the pull request will be addressed. For more information see the style guide.
+1. Make changes, compile, and test thoroughly. This repository uses [pnpm](https://pnpm.io) — run `pnpm install --frozen-lockfile`, then `pnpm run lint`, `pnpm run test` and `pnpm run build` before opening the pull request. `pnpm run build` runs jsii, which is what validates the published construct API, so a change that compiles under `tsc` can still fail here. See "Development setup" below for the Node.js version requirement and "Registry" for how installs resolve inside and outside Alliander. Code style should match existing style and conventions, and changes should be focused on the topic the pull request will be addressed. For more information see the style guide.
 1. Push commits to your fork.
 1. Create a Github pull request from your topic branch.
 1. Pull requests will be reviewed by one of the maintainers who may discuss, offer constructive feedback, request changes, or approve
@@ -52,6 +50,24 @@ the work. For more information see the Code review guideline.
 1. Upon receiving the sign-off of one of the maintainers you may merge your changes, or if you
    do not have permission to do that, you may request a maintainer to merge it for you.
 
+## Development setup
+
+This repository uses [pnpm](https://pnpm.io). The version is pinned in the `packageManager` field of `package.json`, and pnpm installs that version for you on first use, so there is nothing to install beyond pnpm itself.
+
+Use Node.js 22 or 24; CI pins 24. jsii is the constraint here, not the runtime: it compiles this construct and supports `^20`, `^22` and `^24` only, so a newer major produces an "untested version" warning and unsupported behaviour.
+
+Node 20 is technically still accepted but should not be used. It reached end-of-life on 2026-04-30, so jsii already marks it `[DEPRECATED]` and warns on every build, and it leaves jsii's extended support window on 2026-10-30, after which the warning becomes a hard "not supported anymore".
+
+```sh
+pnpm install --frozen-lockfile   # install exactly what pnpm-lock.yaml pins
+pnpm run lint                    # oxlint
+pnpm run test                    # jest, with coverage
+pnpm run build                   # tsc, then jsii (validates the published API surface)
+```
+
+### Dependency cooldown
+
+`pnpm-workspace.yaml` sets `minimumReleaseAge: 4320`, so pnpm refuses to resolve any version — direct or transitive — published less than three days ago.
 
 ## Attribution
 

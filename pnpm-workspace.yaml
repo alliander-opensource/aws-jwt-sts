@@ -1,0 +1,71 @@
+---
+# pnpm settings for aws-jwt-sts.
+#
+# Since pnpm 10, .npmrc is only consulted for registry and auth settings.
+# Every other setting must live here. https://pnpm.io/settings
+
+# REQUIRED -- not a preference, and not safe to remove.
+#
+# This package publishes `bundleDependencies` (see package.json): the runtime
+# deps that aws_lambda_nodejs re-bundles with esbuild at the *consumer's* synth
+# time, which therefore have to ship inside the tarball. Under pnpm's default
+# `isolated` linker, node_modules is a symlink tree into the content-addressable
+# store, so packing it would produce a broken tarball. pnpm refuses outright
+# with BUNDLED_DEPENDENCIES_WITHOUT_HOISTED.
+#
+# `hoisted` produces the same flat, real node_modules that npm creates, which
+# also keeps `npm pack` / `npm publish` usable as a fallback publish path.
+nodeLinker: hoisted
+
+# pnpm does not run dependency build scripts unless they are ruled on here, and
+# an unreviewed build script fails the install (strictDepBuilds, default true).
+# `allowBuilds` replaced onlyBuiltDependencies/ignoredBuiltDependencies in
+# pnpm 11 -- the old list-shaped settings are silently inert, so do not
+# reintroduce them. https://pnpm.io/settings/build
+allowBuilds:
+  # esbuild's postinstall installs its platform binary. This one is load
+  # bearing: esbuild is what bundles the Lambda handlers.
+  esbuild: true
+  # Native optional deps of oxlint and jest respectively. Both ship prebuilt
+  # binaries for supported platforms, so their fallback build scripts are not
+  # needed here. Denied rather than left unreviewed, so installs stay silent.
+  unrs-resolver: false
+  "@parcel/watcher": false
+
+# Supply-chain backstop: refuse to resolve a version published less than this
+# many minutes ago, for direct AND transitive dependencies. Most malicious
+# package versions are caught and yanked within hours, so a cooldown filters out
+# the smash-and-grab compromises.
+#
+# This is the PRIMARY control on the public-registry path, which is what both
+# workflows in .github/workflows use and what every external contributor uses.
+# Alliander developers installing through the Artifactory mirror get its own
+# (~7 day) server-side cooldown on top of this; nobody gets less than 3 days.
+#
+# 3 days rather than 7: pnpm re-validates the committed lockfile against this
+# policy on EVERY install, so a window wider than the age of the versions we
+# pin would make `pnpm install --frozen-lockfile` reject its own lockfile. When
+# a genuinely urgent upgrade is younger than this, add that exact version to
+# minimumReleaseAgeExclude rather than lowering the window for everything.
+# (pnpm 11 already defaults this to 1440; this widens it.)
+#
+# Setting this explicitly auto-enables minimumReleaseAgeStrict, so in CI (no
+# TTY) an immature version FAILS the install rather than being skipped. The
+# `cooldown` in .github/dependabot.yml must stay >= this window so bot pull
+# requests do not open inside it -- raise both together, or neither.
+minimumReleaseAge: 4320 # 3 days
+
+# Already pnpm's default. Pinned so that a machine-wide or user-level
+# `strict-ssl=false` -- not unusual on networks that intercept TLS -- cannot
+# silently turn off certificate validation for this repository's installs.
+strictSsl: true
+
+overrides:
+  # Collapse any transitive jest onto the single version we develop against.
+  # Keep this in sync with devDependencies.jest in package.json. (Spelling it
+  # out rather than using the old "$jest" reference, which pnpm deprecated.)
+  jest: "^30.5.1"
+  # Transitive-dependency CVE pins. Raise these, never lower them.
+  # brace-expansion <1.1.13 is the ReDoS advisory reached via jest.
+  "brace-expansion@<1.1.13": "1.1.13"
+  diff: "9.0.0"
