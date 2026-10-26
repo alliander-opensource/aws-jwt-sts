@@ -43,3 +43,39 @@ jobs:
       # construct surface fails the PR rather than the release.
       - name: compile typescript
         run: pnpm run build
+
+  # The main job compiles and tests against the FLOOR of each peer range, which
+  # is what keeps the floor honest (see scripts/check-peer-floors.mjs). This job
+  # covers the other end: the newest aws-cdk-lib/constructs a consumer can
+  # install today. Nothing here is committed; the bump only lives in this run.
+  latest-peers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: widen peer devDependencies to their major
+        run: npm pkg set "devDependencies.aws-cdk-lib=^2" "devDependencies.constructs=^10"
+
+      - name: install dependencies with newest peers
+        run: pnpm update aws-cdk-lib constructs
+
+      - name: show resolved peer versions
+        run: |
+          node -p "'aws-cdk-lib ' + require('./node_modules/aws-cdk-lib/package.json').version"
+          node -p "'constructs ' + require('./node_modules/constructs/package.json').version"
+
+      - name: run unit tests
+        run: pnpm run test
+
+      - name: compile typescript
+        run: pnpm exec tsc
+
+      - name: compile jsii
+        run: pnpm exec jsii --tsconfig=tsconfig.json
