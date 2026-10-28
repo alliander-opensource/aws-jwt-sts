@@ -105,6 +105,24 @@ test('creates sts construct with custom alarm names', () => {
   }))
 })
 
+test.each([
+  ['state machine', 'sts-key_rotate_sfn-alarm'],
+  ['lambda', 'sts-key_rotate_errors_lambda-alarm']
+])('key rotation %s alarm fires on a single failure', (_label, alarmName) => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'RotationAlarms', {
+    defaultAudience: 'api://default-aud'
+  })
+
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::CloudWatch::Alarm', Match.objectLike({
+    AlarmName: alarmName,
+    ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+    Threshold: 1,
+    EvaluationPeriods: 1
+  }))
+})
+
 test('creates sts construct with custom domain name', () => {
   const stack = new cdk.Stack()
   new AwsJwtSts(stack, 'WithCustomDomain', {

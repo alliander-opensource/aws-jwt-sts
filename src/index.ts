@@ -602,7 +602,7 @@ export class AwsJwtSts extends Construct {
 
     new cloudwatch.Alarm(this, 'StepFunctionError', {
       alarmName: props.alarmNameKeyRotationStepFunctionFailed ?? 'sts-key_rotate_sfn-alarm',
-      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       threshold: 1,
       evaluationPeriods: 1,
       metric: rotateKeysMachine.metricFailed(),
@@ -640,7 +640,7 @@ export class AwsJwtSts extends Construct {
 
     new cloudwatch.Alarm(this, 'LambdaRotateError', {
       alarmName: props.alarmNameKeyRotationLambdaFailed ?? 'sts-key_rotate_errors_lambda-alarm',
-      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_THRESHOLD,
+      comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       threshold: 1,
       evaluationPeriods: 1,
       metric: rotateErrors,
