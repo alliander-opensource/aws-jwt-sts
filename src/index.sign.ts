@@ -80,14 +80,20 @@ export const handler = async (apiEvent: APIGatewayEvent, _context: Context): Pro
     SigningAlgorithm: 'RSASSA_PKCS1_V1_5_SHA_256',
     MessageType: 'RAW'
   }))
-  logger.debug(JSON.stringify(signResponse))
+  // Log only metadata: the full response carries the raw signature, which is as sensitive as the token
+  logger.debug('KMS sign response', {
+    keyId: signResponse.KeyId,
+    signingAlgorithm: signResponse.SigningAlgorithm,
+    requestId: signResponse.$metadata?.requestId
+  })
 
   const signature = Buffer
     .from(signResponse.Signature as Uint8Array)
     .toString('base64url')
 
   const token = `${tokenHeaders}.${tokenPayload}.${signature}`
-  logger.debug(token)
+  // Never log the token or the signature: the token is a bearer credential for its whole lifetime,
+  logger.debug('Issued token', { keyId: currentKeyId, kid, claims: payload })
 
   return respond(JSON.stringify({
     token
