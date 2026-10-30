@@ -261,3 +261,41 @@ test('creates sts construct with default api name', () => {
     Name: 'jwk-sts-api'
   }))
 })
+
+// CloudWatch's comparison semantics, so the rotation-alarm test can ask "does
+// this datapoint breach?" instead of pinning one operator/threshold spelling.
+function breaches (alarm: { ComparisonOperator: string, Threshold: number }, value: number): boolean {
+  switch (alarm.ComparisonOperator) {
+    case 'GreaterThanOrEqualToThreshold': return value >= alarm.Threshold
+    case 'GreaterThanThreshold': return value > alarm.Threshold
+    case 'LessThanOrEqualToThreshold': return value <= alarm.Threshold
+    case 'LessThanThreshold': return value < alarm.Threshold
+    default: throw new Error(`unhandled ComparisonOperator ${alarm.ComparisonOperator}`)
+  }
+}
+
+// Key rotation runs once a quarter, and the LambdaInvoke tasks only retry
+// Lambda service exceptions, not function errors (those go straight to the
+// Catch -> SNS -> Fail path). A broken rotation therefore yields exactly one
+// failed execution and one Lambda error: a single datapoint of value 1. The
+// alarm must trip on that, and must not trip on a clean run's 0.
+test.each([
+  'sts-key_rotate_sfn-alarm',
+  'sts-key_rotate_errors_lambda-alarm'
+])('rotation alarm %s fires on a single failure', (alarmName) => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'RotationAlarms', {
+    defaultAudience: 'api://default-aud'
+  })
+
+  const alarms = Object.values(Template.fromStack(stack).findResources('AWS::CloudWatch::Alarm', {
+    Properties: { AlarmName: alarmName }
+  }))
+  expect(alarms).toHaveLength(1)
+  const alarm = alarms[0].Properties
+
+  expect(breaches(alarm, 1)).toBe(true)
+  expect(breaches(alarm, 0)).toBe(false)
+  // One breaching datapoint must be enough to go into ALARM.
+  expect(alarm.DatapointsToAlarm ?? alarm.EvaluationPeriods).toBe(1)
+})
