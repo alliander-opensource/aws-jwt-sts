@@ -600,6 +600,9 @@ export class AwsJwtSts extends Construct {
 
     /** ---------------------- Cloudwatch ----------------------- */
 
+    // Rotation runs once a quarter and function errors are not retried, so a
+    // failed rotation produces exactly one failed execution (and one Lambda
+    // error below). The rotation alarms must therefore trip on a count of 1.
     new cloudwatch.Alarm(this, 'StepFunctionError', {
       alarmName: props.alarmNameKeyRotationStepFunctionFailed ?? 'sts-key_rotate_sfn-alarm',
       comparisonOperator: cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,

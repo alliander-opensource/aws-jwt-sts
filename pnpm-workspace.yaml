@@ -64,8 +64,19 @@ overrides:
   # Collapse any transitive jest onto the single version we develop against.
   # Keep this in sync with devDependencies.jest in package.json. (Spelling it
   # out rather than using the old "$jest" reference, which pnpm deprecated.)
-  jest: "^30.5.1"
+  jest: "^30.5.2"
   # Transitive-dependency CVE pins. Raise these, never lower them.
-  # brace-expansion <1.1.13 is the ReDoS advisory reached via jest.
-  "brace-expansion@<1.1.13": "1.1.13"
+  #
+  # brace-expansion is reached via jest (minimatch/glob/test-exclude) and has a
+  # run of DoS advisories, each patched separately on every major line. One pin
+  # per line, so no consumer of it is forced across a major: GHSA-q2hr-2g5m-vwhr
+  # (latest of them) is fixed in 1.1.21, 2.1.7, 3.0.9 and 5.0.12. The 4.x line
+  # has no patched release, so it is lifted to 5.0.12.
+  "brace-expansion@<1.1.21": "1.1.21"
+  "brace-expansion@>=2.0.0 <2.1.7": "2.1.7"
+  "brace-expansion@>=3.0.0 <3.0.9": "3.0.9"
+  "brace-expansion@>=4.0.0 <5.0.12": "5.0.12"
+  # handlebars is reached via ts-jest. 4.7.10 fixes GHSA-8r5x-fm3f-whwj and
+  # GHSA-p8wg-vrv2-v86f (critical) and GHSA-xw65-4hp5-5hc7 (moderate).
+  "handlebars@<4.7.10": "4.7.10"
   diff: "9.0.0"

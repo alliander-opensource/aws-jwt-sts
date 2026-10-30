@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 /* eslint-disable import/no-unresolved */
+import { Logger } from '@aws-lambda-powertools/logger'
 import {
   DescribeKeyCommand,
   KMSClient,
@@ -190,6 +191,44 @@ describe('handlers/sign/sign.ts', () => {
       MessageType: 'RAW',
       Message: expect.any(Buffer)
     })
+  })
+
+  test('should not log the issued token or its signature at any level', async () => {
+    // A signed JWT is a bearer credential for its whole lifetime, so it must never reach
+    // CloudWatch, not even at debug. The raw KMS signature counts as the token too: the
+    // header, kid and claims are public or derivable, so the signature alone rebuilds it.
+    // Spying on the prototype captures every call regardless of the configured log level.
+    const levels = ['trace', 'debug', 'info', 'warn', 'error', 'critical'] as const
+    const spies = levels.map(level => jest.spyOn(Logger.prototype, level))
+
+    try {
+      const signatureBytes = new Uint8Array(Buffer.from('i-am-a-secret-signature'))
+
+      kmsMock
+        .on(DescribeKeyCommand).resolves({ KeyMetadata: { KeyId: 'key-1' } })
+        .on(ListResourceTagsCommand).resolves({ Tags: [{ TagKey: 'jwk_kid', TagValue: 'thekid' }] })
+        .on(SignCommand).resolves({ Signature: signatureBytes })
+
+      const response = await handler(VALID_EVENT, CONTEXT)
+      expect(response.statusCode).toEqual(200)
+      const { token } = JSON.parse(response.body)
+      const signatureSegment = token.split('.')[2]
+
+      const render = (arg: unknown) => typeof arg === 'string' ? arg : JSON.stringify(arg)
+      const logged = spies
+        .flatMap(spy => spy.mock.calls)
+        .map(args => args.map(render).join(' '))
+        .join('\n')
+
+      // Guard against a vacuous pass: the spies must actually be observing the handler's logger
+      expect(logged).not.toEqual('')
+      // The signature segment is a substring of the token, so this covers the whole token as well
+      expect(logged).not.toContain(signatureSegment)
+      // JSON.stringify renders a Uint8Array as {"0":b0,"1":b1,...}, which is how a dumped SDK response carries it
+      expect(logged).not.toContain(JSON.stringify(signatureBytes))
+    } finally {
+      spies.forEach(spy => spy.mockRestore())
+    }
   })
 })
 
