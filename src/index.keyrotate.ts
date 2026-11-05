@@ -15,7 +15,7 @@ import {
   UpdateAliasCommand
 } from '@aws-sdk/client-kms'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { KEYUTIL, KJUR } from 'jsrsasign'
+import { createHash, createPublicKey } from 'node:crypto'
 
 const client = new KMSClient({})
 
@@ -192,19 +192,35 @@ async function generateJWK (keyAlias: string): Promise<any> {
   // Get the public key from kms
   const getPubKeyResponse = await client.send(new GetPublicKeyCommand({ KeyId: keyAlias }))
 
-  // Generate HEX format from the response (DER)
-  const pubKeyHex = Buffer.from(getPubKeyResponse.PublicKey as Uint8Array).toString('hex')
+  // KMS returns the public key as DER-encoded SubjectPublicKeyInfo
+  const publicKey = createPublicKey({
+    key: Buffer.from(getPubKeyResponse.PublicKey as Uint8Array),
+    format: 'der',
+    type: 'spki'
+  })
 
-  // Get the pub key in pem format
-  const pubKeyPem = KJUR.asn1.ASN1Util.getPEMStringFromHex(pubKeyHex, 'PUBLIC KEY')
+  // Only the RSA members are kept, so the published JWK carries nothing beyond
+  // what the key type defines
+  const { kty, n, e } = publicKey.export({ format: 'jwk' })
 
-  // Return the JWK format for the key
-  const jwk: any = KEYUTIL.getJWK(pubKeyPem)
+  return {
+    kty,
+    n,
+    e,
+    kid: jwkThumbprint(kty!, n!, e!),
+    use: 'sig',
+    alg: 'RS256'
+  }
+}
 
-  jwk.use = 'sig'
-  jwk.alg = 'RS256'
-
-  return jwk
+// RFC 7638 JWK thumbprint: SHA-256 over the required members in lexicographic
+// order with no whitespace. Used as the kid, and stored as the jwk_kid tag on
+// the KMS key, so it must stay byte-identical to what was published before --
+// the value jsrsasign's KEYUTIL.getJWK produced.
+function jwkThumbprint (kty: string, n: string, e: string): string {
+  return createHash('sha256')
+    .update(JSON.stringify({ e, kty, n }))
+    .digest('base64url')
 }
 
 async function setKMSKeyTags (keyAlias: string, tags: Tag[]) {
