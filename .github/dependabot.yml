@@ -52,3 +52,16 @@ updates:
       - dependency-name: '@types/node'
         update-types:
           - version-update:semver-major
+      # Pinned to the FLOOR of their peer ranges on purpose
+      # (scripts/check-peer-floors.mjs); the latest-peers job in pr.yml covers
+      # the newest. A floor moves deliberately, together with its
+      # peerDependencies range, never as a routine bump. Majors still raise a
+      # pull request, as the signal to plan that move.
+      - dependency-name: aws-cdk-lib
+        update-types:
+          - version-update:semver-minor
+          - version-update:semver-patch
+      - dependency-name: constructs
+        update-types:
+          - version-update:semver-minor
+          - version-update:semver-patch
