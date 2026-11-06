@@ -22,6 +22,19 @@ jobs:
           node-version: 24
           cache: pnpm
 
+      # pnpm publish uses the version in package.json and never looks at the
+      # tag, so a mismatched tag silently publishes a different version (tag
+      # 0.3.9 shipped as npm 0.4.0 this way). Fail before anything is built.
+      - name: check tag matches package.json version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::tag '$TAG' does not match package.json version '$VERSION'"
+            exit 1
+          fi
+
       - name: install dependencies
         run: pnpm install --frozen-lockfile
 
