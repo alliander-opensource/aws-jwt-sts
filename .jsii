@@ -7,8 +7,8 @@
   },
   "bundled": {
     "@aws-lambda-powertools/logger": "^2.36.0",
-    "@aws-sdk/client-kms": "^3.1153.0",
-    "@aws-sdk/client-s3": "^3.1153.0",
+    "@aws-sdk/client-kms": "^3.1161.0",
+    "@aws-sdk/client-s3": "^3.1161.0",
     "@types/aws-lambda": "^8.10.164"
   },
   "dependencies": {
@@ -9563,7 +9563,7 @@
   },
   "description": "@alliander-opensource/aws-jwt-sts",
   "homepage": "https://github.com/alliander-opensource/aws-jwt-sts.git",
-  "jsiiVersion": "6.0.18 (build e678771)",
+  "jsiiVersion": "6.0.19 (build be64f43)",
   "keywords": [
     "awscdk"
   ],
@@ -10007,6 +10007,6 @@
       "symbolId": "src/index:WafUsage"
     }
   },
-  "version": "0.4.0",
-  "fingerprint": "jbOclnAkdR0T2Cw+4TDSrYNkIdV47YHvEbewBJOfrkE="
+  "version": "0.4.1",
+  "fingerprint": "B0SJjLFkgxYYYm4uzKbrXi8BGiBYy2nX4fQ9oaTOdIw="
 }
