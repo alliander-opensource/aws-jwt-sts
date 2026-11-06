@@ -212,7 +212,8 @@ export class AwsJwtSts extends Construct {
       autoDeleteObjects: true,
       encryption: BucketEncryption.S3_MANAGED,
       versioned: true,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true
     })
 
     /** ------------------- Cloudfront Definition ------------------- */
