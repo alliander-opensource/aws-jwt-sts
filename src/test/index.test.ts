@@ -280,6 +280,30 @@ test('creates sts construct with default api name', () => {
   }))
 })
 
+// Every legitimate reader/writer already uses HTTPS (CloudFront via OAC with
+// REDIRECT_TO_HTTPS, the rotation Lambda via the AWS SDK); this pins the
+// bucket-policy Deny that keeps it that way for any future principal.
+test('oidc bucket denies requests not made over TLS', () => {
+  const stack = new cdk.Stack()
+  new AwsJwtSts(stack, 'EnforceSsl', {
+    defaultAudience: 'api://default-aud'
+  })
+
+  const template = Template.fromStack(stack)
+  template.hasResourceProperties('AWS::S3::BucketPolicy', {
+    PolicyDocument: {
+      Statement: Match.arrayWith([
+        Match.objectLike({
+          Effect: 'Deny',
+          Principal: { AWS: '*' },
+          Action: 's3:*',
+          Condition: { Bool: { 'aws:SecureTransport': 'false' } }
+        })
+      ])
+    }
+  })
+})
+
 // CloudWatch's comparison semantics, so the rotation-alarm test can ask "does
 // this datapoint breach?" instead of pinning one operator/threshold spelling.
 function breaches (alarm: { ComparisonOperator: string, Threshold: number }, value: number): boolean {
