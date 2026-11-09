@@ -1,0 +1,121 @@
+name: latest peers
+
+# The PR workflow compiles and tests against the FLOOR of each peer range, which
+# is what keeps the floor honest (see scripts/check-peer-floors.mjs). This
+# workflow covers the other end: the newest aws-cdk-lib/constructs a consumer
+# can install today. Nothing here is committed; the bump only lives in the run.
+#
+# That end moves without any commit here, whenever AWS releases, and Dependabot
+# deliberately leaves the floor-pinned peers alone. So besides every pull
+# request it also runs weekly, and a failure on the default branch is tracked
+# in a single labelled issue that closes itself once a run passes again.
+
+on:
+  workflow_dispatch:
+  pull_request:
+  schedule:
+    # Mondays 06:17 UTC; off the hour to dodge the top-of-hour cron rush.
+    - cron: '17 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  latest-peers:
+    runs-on: ubuntu-latest
+    outputs:
+      aws_cdk_lib: ${{ steps.versions.outputs.aws_cdk_lib }}
+      constructs: ${{ steps.versions.outputs.constructs }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: widen peer devDependencies to their major
+        run: npm pkg set "devDependencies.aws-cdk-lib=^2" "devDependencies.constructs=^10"
+
+      - name: install dependencies with newest peers
+        run: pnpm update aws-cdk-lib constructs
+
+      - name: show resolved peer versions
+        id: versions
+        run: |
+          CDK="$(node -p "require('./node_modules/aws-cdk-lib/package.json').version")"
+          CONSTRUCTS="$(node -p "require('./node_modules/constructs/package.json').version")"
+          echo "aws-cdk-lib $CDK"
+          echo "constructs $CONSTRUCTS"
+          echo "aws_cdk_lib=$CDK" >> "$GITHUB_OUTPUT"
+          echo "constructs=$CONSTRUCTS" >> "$GITHUB_OUTPUT"
+
+      - name: run unit tests
+        run: pnpm run test
+
+      - name: compile typescript
+        run: pnpm exec tsc
+
+      - name: compile jsii
+        run: pnpm exec jsii --tsconfig=tsconfig.json
+
+  # A separate job so the issues:write token never shares a runner with the
+  # freshly installed, newest-release packages the job above executes.
+  report:
+    needs: latest-peers
+    # Pull request runs report through the PR checks; only default-branch runs
+    # speak for what consumers get. workflow_dispatch on the default branch is
+    # included so the reporting path can be exercised by hand.
+    if: >-
+      always() &&
+      github.event_name != 'pull_request' &&
+      github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: open, update or close the tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RESULT: ${{ needs.latest-peers.result }}
+          CDK_VERSION: ${{ needs.latest-peers.outputs.aws_cdk_lib }}
+          CONSTRUCTS_VERSION: ${{ needs.latest-peers.outputs.constructs }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          LABEL=latest-peers
+          # Empty when the run failed before the versions step (e.g. install).
+          VERSIONS="aws-cdk-lib ${CDK_VERSION:-unknown}, constructs ${CONSTRUCTS_VERSION:-unknown}"
+
+          ISSUE="$(gh issue list --label "$LABEL" --state open --limit 1 \
+            --json number --jq '.[0].number // empty')"
+
+          case "$RESULT" in
+            success)
+              if [ -n "$ISSUE" ]; then
+                gh issue close "$ISSUE" --comment "Passing again with $VERSIONS: $RUN_URL"
+              fi
+              ;;
+            failure)
+              BODY="The latest-peers run failed with $VERSIONS: $RUN_URL"
+              if [ -n "$ISSUE" ]; then
+                gh issue comment "$ISSUE" --body "$BODY"
+              else
+                # --force makes this idempotent: it updates the label if it exists.
+                gh label create "$LABEL" --force --color d93f0b \
+                  --description "Newest aws-cdk-lib/constructs break the construct"
+                gh issue create --label "$LABEL" \
+                  --title "Construct fails against the newest aws-cdk-lib/constructs" \
+                  --body "$BODY
+
+          The floor build is unaffected; this is the top of the peer ranges, i.e. what a consumer installing today gets. Fix forward, or cap the peer range if a fix has to wait. This issue closes itself when a scheduled run passes again."
+              fi
+              ;;
+            *)
+              # cancelled/skipped say nothing about compatibility.
+              echo "latest-peers result was '$RESULT'; leaving the tracking issue alone"
+              ;;
+          esac
